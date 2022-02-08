@@ -13,8 +13,9 @@ const Home: NextPage = () => {
           background="rgba(0,0,0,0.5)"
           paddingY="2"
           zIndex="1"
+          color="c7"
         >
-          <Heading color="heading" as="h1" size="3xl">
+          <Heading  as="h1" size="3xl">
             Gordon Builds
           </Heading>
           <Text marginTop="1" fontSize="xl">
@@ -25,6 +26,7 @@ const Home: NextPage = () => {
           </Text>
         </Center>
         <Image
+          draggable={false}
           placeholder="blur"
           src={Background}
           layout="fill"
