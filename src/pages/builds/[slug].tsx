@@ -24,6 +24,7 @@ export async function getServerSideProps(context: NextPageContext) {
       props: { ...buildData, description },
     };
   } catch (error) {
+    console.error(error);
     return {
       notFound: true,
     };
