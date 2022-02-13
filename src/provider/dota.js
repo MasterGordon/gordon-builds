@@ -26,6 +26,7 @@ const sources = {
 
 /**
  * @argument {"abilities" | "items" | "heroes"} type
+ * @returns {Promise<any[]>}
  */
 export async function getData(type) {
   const source = sources[type];
