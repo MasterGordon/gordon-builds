@@ -7,15 +7,16 @@ const Home: NextPage = () => {
   return (
     <Box height="100vh">
       <Center height="100%">
-        <Center
+        <Box
+          as={Center}
           width="100%"
           flexDirection="column"
           background="rgba(0,0,0,0.5)"
           paddingY="2"
           zIndex="1"
-          color="c7"
+          color="gray.50"
         >
-          <Heading  as="h1" size="3xl">
+          <Heading as="h1" size="3xl">
             Gordon Builds
           </Heading>
           <Text marginTop="1" fontSize="xl">
@@ -24,7 +25,7 @@ const Home: NextPage = () => {
           <Text marginTop="1" fontSize="xl">
             Coming soon!
           </Text>
-        </Center>
+        </Box>
         <Image
           draggable={false}
           placeholder="blur"
