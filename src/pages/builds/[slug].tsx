@@ -11,6 +11,8 @@ import {
   Img,
   Tooltip,
   VStack,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import { serialize } from "next-mdx-remote/serialize";
@@ -49,6 +51,42 @@ const Build: NextPage<Props> = (props) => {
             </Heading>
           </VStack>
         </HStack>
+        <Heading as="h2" size="md">
+          Item Build
+        </Heading>
+        <Wrap>
+          {Object.keys(props.items).map((category) => (
+            <WrapItem
+              as={VStack}
+              alignItems="start"
+              key={category}
+              padding="2"
+              borderRadius="md"
+              backgroundColor="gray.800"
+            >
+              <Heading as="h3" size="md">
+                {category}
+              </Heading>
+              <Wrap as={HStack} spacing="2">
+                {props.items[category].map((item, index) => (
+                  <WrapItem
+                    as={Img}
+                    src={`http://cdn.dota2.com/apps/dota2/images/items/${item.key.replace(
+                      "item_",
+                      ""
+                    )}_lg.png`}
+                    alt={item.key}
+                    key={index}
+                    height={["2em", "2.5em", "3em"]}
+                  />
+                ))}
+              </Wrap>
+            </WrapItem>
+          ))}
+        </Wrap>
+        <Heading as="h2" size="md">
+          Hero Skills
+        </Heading>
         <Box
           overflowX="auto"
           maxWidth="calc(100vw - var(--chakra-space-16))"
