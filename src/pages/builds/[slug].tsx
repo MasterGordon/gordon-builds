@@ -51,7 +51,11 @@ const Build: NextPage<Props> = (props) => {
             </Heading>
           </VStack>
         </HStack>
-        <Box overflowX="auto" maxWidth={["87vw", "90vw", "95vw"]} width="100%">
+        <Box
+          overflowX="auto"
+          maxWidth="calc(100vw - var(--chakra-space-16))"
+          width="100%"
+        >
           <VStack alignItems="start">
             {props.heroData.abilities.map((ability: string, index: number) => {
               return ability != "generic_hidden" ? (
