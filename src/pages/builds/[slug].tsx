@@ -5,12 +5,11 @@ import { getData } from "../../provider/dota";
 import { Build } from "../../builds/Build";
 import {
   Box,
-  Flex,
+  Center,
   Heading,
   HStack,
   Img,
   Tooltip,
-  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
@@ -27,7 +26,6 @@ const components = {
 };
 
 const Build: NextPage<Props> = (props) => {
-  console.log(props);
   return (
     <Layout>
       <VStack alignItems="start">
@@ -87,7 +85,7 @@ const Build: NextPage<Props> = (props) => {
                       .split("")
                       .map((letter: string, index: number) => {
                         return (
-                          <Box
+                          <Center
                             userSelect="none"
                             key={index}
                             bg={letter == "X" ? "yellow.600" : "gray.800"}
@@ -96,10 +94,10 @@ const Build: NextPage<Props> = (props) => {
                             textAlign="center"
                             fontSize="sm"
                             fontWeight="bold"
-                            color="gray.800"
+                            color="black"
                           >
                             {letter == "X" ? index + 1 : " "}
-                          </Box>
+                          </Center>
                         );
                       })}
                   </HStack>
