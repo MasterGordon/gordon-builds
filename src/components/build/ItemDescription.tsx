@@ -52,26 +52,34 @@ const ItemDescription: React.FC<Props> = ({ description, item }) => {
         padding="2"
         borderBottomRadius="sm"
       >
-        {item.custom_attributes &&
-          item.custom_attributes.map((attr) => (
-            <HStack
-              key={attr.key}
-              alignItems="start"
-              textShadow="1px 1px black"
-            >
-              {attr.prefix && (
-                <chakra.span fontSize="sm" color="gray.500" marginRight="0.5">
-                  {attr.prefix}
+        {item.custom_attributes && (
+          <Box>
+            {item.custom_attributes.map((attr) => (
+              <HStack
+                key={attr.key}
+                alignItems="start"
+                textShadow="1px 1px black"
+                spacing="1"
+              >
+                {attr.prefix && (
+                  <chakra.span fontSize="sm" color="gray.500" marginRight="0.5">
+                    {attr.prefix}
+                  </chakra.span>
+                )}
+                <chakra.span fontSize="sm" color="white" fontWeight="black">
+                  {attr.value}
                 </chakra.span>
-              )}
-              <chakra.span fontSize="sm" color="white" fontWeight="bold">
-                {attr.value}
-              </chakra.span>
-              <chakra.span fontSize="sm" color="gray.500">
-                {attr.header}
-              </chakra.span>
-            </HStack>
-          ))}
+                <chakra.span
+                  fontSize="sm"
+                  color="gray.500"
+                  fontWeight="semibold"
+                >
+                  {attr.header}
+                </chakra.span>
+              </HStack>
+            ))}
+          </Box>
+        )}
         {item.description &&
           item.description.map((description) =>
             description.type === "passive" ? (
@@ -87,32 +95,30 @@ const ItemDescription: React.FC<Props> = ({ description, item }) => {
               </Box>
             ) : undefined
           )}
-        {item.notes &&
-          item.notes?.length > 0 &&
-          item.notes.map((note) => (
-            <Box
-              key={note}
-              backgroundColor="gray.700"
-              textShadow="1px 1px black"
-              padding="2"
-            >
-              <Box color="white" fontWeight="semibold">
+        {item.notes && item.notes?.length > 0 && (
+          <Box backgroundColor="gray.700" padding="2">
+            {item.notes.map((note, index) => (
+              <Box color="gray.400" fontWeight="semibold" key={note + index}>
                 {note}
               </Box>
-            </Box>
-          ))}
-        {item.lore && (
-          <Box
-            backgroundColor="gray.900"
-            textShadow="1px 1px black"
-            padding="2"
-            fontSize="xs"
-            fontStyle="italic"
-            color="gray.400"
-            marginTop="1.5"
-          >
-            {item.lore}
+            ))}
           </Box>
+        )}
+        {item.lore && (
+          <>
+            <Box />
+            <Box
+              backgroundColor="gray.900"
+              textShadow="1px 1px black"
+              padding="2"
+              fontSize="xs"
+              fontStyle="italic"
+              color="gray.400"
+              marginTop="8"
+            >
+              {item.lore}
+            </Box>
+          </>
         )}
       </VStack>
     </Box>

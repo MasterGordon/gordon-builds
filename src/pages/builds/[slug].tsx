@@ -11,14 +11,13 @@ import {
   Img,
   Tooltip,
   VStack,
-  Wrap,
-  WrapItem,
 } from "@chakra-ui/react";
-import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
+import { MDXRemoteSerializeResult } from "next-mdx-remote";
 import { serialize } from "next-mdx-remote/serialize";
 import BuildDescription from "../../components/build/BuildDescription";
 import BuildItems from "../../components/build/BuildItems";
 import BuildHeader from "../../components/build/BuildHeader";
+import Head from "next/head";
 
 interface Props extends Build {
   mdx: MDXRemoteSerializeResult;
@@ -31,6 +30,9 @@ const Build: NextPage<Props> = (props) => {
   console.log(props);
   return (
     <Layout>
+      <Head>
+        <title>{props.name} - Gordon Builds</title>
+      </Head>
       <VStack alignItems="start">
         <BuildHeader
           heroKey={props.heroKey}

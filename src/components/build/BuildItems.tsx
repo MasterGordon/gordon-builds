@@ -41,7 +41,7 @@ const BuildItems: React.FC<Props> = (props) => {
                 borderRadius="md"
                 key={index}
                 label={<ItemDescription item={itemData[item.key]} />}
-                boxShadow="2px 2px 10px 12px rgba(0,0,0,0.75)"
+                boxShadow="2px 2px 8px 8px rgba(0,0,0,0.75)"
               >
                 <WrapItem
                   as={Img}
