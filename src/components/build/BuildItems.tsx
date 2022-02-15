@@ -42,7 +42,6 @@ const BuildItems: React.FC<Props> = (props) => {
                 key={index}
                 label={<ItemDescription item={itemData[item.key]} />}
                 boxShadow="2px 2px 10px 12px rgba(0,0,0,0.75)"
-                isOpen={index === 0 || undefined}
               >
                 <WrapItem
                   as={Img}
