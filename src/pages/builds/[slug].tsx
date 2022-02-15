@@ -24,6 +24,7 @@ interface Props extends Build {
   mdx: MDXRemoteSerializeResult;
   heroData: any;
   abilities: any;
+  itemData: any;
 }
 
 const Build: NextPage<Props> = (props) => {
@@ -40,7 +41,7 @@ const Build: NextPage<Props> = (props) => {
         <Heading as="h2" size="md">
           Item Build
         </Heading>
-        <BuildItems items={props.items} />
+        <BuildItems items={props.items} itemData={props.itemData} />
         <Heading as="h2" size="md">
           Hero Skills
         </Heading>

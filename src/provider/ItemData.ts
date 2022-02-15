@@ -1,31 +1,31 @@
 export interface Item {
   id: number;
   key: string;
-  name?: string | null;
-  description?: DescriptionEntityOrEntity[] | null | string;
-  notes?: (string | null)[] | null;
-  lore?: string | null;
+  name: string;
+  description?: Description[];
+  notes?: string[];
+  lore?: string;
   recipe: boolean;
   cost?: number | string;
   home_shop: boolean;
   side_shop: boolean;
   secret_shop: boolean;
-  cooldown?: number | null;
-  mana_cost?: number | null;
-  custom_attributes?: (CustomAttributesEntity | null)[] | null;
-  requirements?: (string | null)[] | null;
-  upgrades?: (string | null)[] | null;
+  cooldown?: number;
+  mana_cost?: number;
+  custom_attributes?: CustomAttributesEntity[];
+  requirements?: string[];
+  upgrades?: string[];
 }
-export interface DescriptionEntityOrEntity {
+export interface Description {
   type: string;
-  header?: string | null;
-  body?: string[] | null;
+  header?: string;
+  body?: string[];
 }
 export interface CustomAttributesEntity {
   key: string;
-  value?: number | number[] | null;
+  value?: number | number[];
   scepter: boolean;
   header: string;
-  prefix?: string | null;
-  suffix?: string | null;
+  prefix?: string;
+  suffix?: string;
 }
