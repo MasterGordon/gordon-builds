@@ -1,16 +1,16 @@
 import axios from "axios";
-import { timingSafeEqual } from "crypto";
-import fetch from "node-fetch";
 
 const baseURL =
   process.env.BASE_URL ||
   "https://raw.githubusercontent.com/dotabuff/d2vpkr/master";
-const secretToken = process.env.SECRET_TOKEN;
+
+const cache = {};
+const cacheTime = {};
 
 const sources = {
   abilities: {
     dataURL: `${baseURL}/dota/scripts/npc/npc_abilities.json`,
-    i18nURL: `${baseURL}/dota/resource/localization/abilities_english.json`,
+    i18nURL1: `${baseURL}/dota/resource/localization/abilities_english.json`,
     serializer: (data, i18n) => new AbilitiesSerializer(data, i18n),
   },
   heroes: {
@@ -19,7 +19,8 @@ const sources = {
   },
   items: {
     dataURL: `${baseURL}/dota/scripts/npc/items.json`,
-    i18nURL: `${baseURL}/dota/resource/dota_english.json`,
+    i18nURL1: `${baseURL}/dota/resource/localization/dota_english.json`,
+    i18nURL2: `${baseURL}/dota/resource/localization/abilities_english.json`,
     serializer: (data, i18n) => new ItemsSerializer(data, i18n),
   },
 };
@@ -29,14 +30,23 @@ const sources = {
  * @returns {Promise<any[]>}
  */
 export async function getData(type) {
+  // Return if cache is not older that 30 minutes
+  if (cache[type] && cacheTime[type] > Date.now() - 30 * 60 * 1000) {
+    return cache[type];
+  }
   const source = sources[type];
-  const promises = [source.dataURL, source.i18nURL]
+  const promises = [source.dataURL, source.i18nURL1, source.i18nURL2]
     .filter((u) => u)
     .map((url) => axios.get(url));
   const responses = await Promise.all(promises);
   const data = responses[0].data;
   const i18n = responses[1] && responses[1].data;
+  if (responses[2]) {
+    Object.assign(i18n.lang.Tokens, responses[2].data.lang.Tokens);
+  }
   const body = source.serializer(data, i18n).serialize();
+  cache[type] = body;
+  cacheTime[type] = Date.now();
   return body;
 }
 
@@ -457,7 +467,11 @@ class ItemsSerializer {
   }
 
   formatAttribute(attribute) {
-    if (!attribute.includes("<h1>")) {
+    if (
+      !attribute.includes("<h1>") ||
+      !attribute.includes("</h1>") ||
+      !attribute.includes(":")
+    ) {
       return {
         type: "hint",
         body: formatDescription(attribute),

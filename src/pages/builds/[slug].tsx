@@ -16,6 +16,9 @@ import {
 } from "@chakra-ui/react";
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import { serialize } from "next-mdx-remote/serialize";
+import BuildDescription from "../../components/build/BuildDescription";
+import BuildItems from "../../components/build/BuildItems";
+import BuildHeader from "../../components/build/BuildHeader";
 
 interface Props extends Build {
   mdx: MDXRemoteSerializeResult;
@@ -23,67 +26,21 @@ interface Props extends Build {
   abilities: any;
 }
 
-const components = {
-  h1: (props: any) => <Heading {...props} as="h2" size="md" />,
-};
-
 const Build: NextPage<Props> = (props) => {
+  console.log(props);
   return (
     <Layout>
       <VStack alignItems="start">
-        <HStack spacing="1">
-          <Img
-            src={`https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/${props.heroKey.replace(
-              "npc_dota_hero_",
-              ""
-            )}.png`}
-            display="inline-block"
-            alt={props.heroKey}
-            height="5em"
-            mr={4}
-          />
-          <VStack alignItems="start" spacing="1">
-            <Heading as="h1" display="inline-flex">
-              {props.name}
-            </Heading>
-            <Heading as="h2" display="inline-flex" size="sm">
-              {props.heroData.name} {props.version}
-            </Heading>
-          </VStack>
-        </HStack>
+        <BuildHeader
+          heroKey={props.heroKey}
+          version={props.version}
+          name={props.name}
+          heroName={props.heroData.name}
+        />
         <Heading as="h2" size="md">
           Item Build
         </Heading>
-        <Wrap>
-          {Object.keys(props.items).map((category) => (
-            <WrapItem
-              as={VStack}
-              alignItems="start"
-              key={category}
-              padding="2"
-              borderRadius="md"
-              backgroundColor="gray.800"
-            >
-              <Heading as="h3" size="md">
-                {category}
-              </Heading>
-              <Wrap as={HStack} spacing="2">
-                {props.items[category].map((item, index) => (
-                  <WrapItem
-                    as={Img}
-                    src={`http://cdn.dota2.com/apps/dota2/images/items/${item.key.replace(
-                      "item_",
-                      ""
-                    )}_lg.png`}
-                    alt={item.key}
-                    key={index}
-                    height={["2em", "2.5em", "3em"]}
-                  />
-                ))}
-              </Wrap>
-            </WrapItem>
-          ))}
-        </Wrap>
+        <BuildItems items={props.items} />
         <Heading as="h2" size="md">
           Hero Skills
         </Heading>
@@ -144,7 +101,7 @@ const Build: NextPage<Props> = (props) => {
             })}
           </VStack>
         </Box>
-        <MDXRemote {...props.mdx} components={components} />
+        <BuildDescription mdx={props.mdx} />
       </VStack>
     </Layout>
   );
@@ -172,10 +129,28 @@ export async function getServerSideProps(context: NextPageContext) {
       return acc;
     }, {});
   if (!heroData) return { notFound: true };
+  const itemData = (await getData("items"))
+    .filter((item) =>
+      Object.keys(build.items).reduce<boolean>((acc, category) => {
+        return (
+          acc ||
+          !!build.items[category].find(
+            (buildItem) => item.key === buildItem.key
+          )
+        );
+      }, false)
+    )
+    .map((item) => {
+      return JSON.parse(JSON.stringify(item));
+    })
+    .reduce((acc, item) => {
+      acc[item.key] = item;
+      return acc;
+    }, {});
   const mdx = await serialize(build.description);
 
   return {
-    props: { ...build, mdx, heroData, abilities },
+    props: { ...build, mdx, heroData, abilities, itemData },
   };
 }
 
