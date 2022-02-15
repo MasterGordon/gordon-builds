@@ -56,7 +56,6 @@ const ItemDescription: React.FC<Props> = ({ description, item }) => {
           item.custom_attributes.map((attr) => (
             <HStack
               key={attr.key}
-              spacing="1"
               alignItems="start"
               textShadow="1px 1px black"
             >
@@ -110,6 +109,7 @@ const ItemDescription: React.FC<Props> = ({ description, item }) => {
             fontSize="xs"
             fontStyle="italic"
             color="gray.400"
+            marginTop="1.5"
           >
             {item.lore}
           </Box>
