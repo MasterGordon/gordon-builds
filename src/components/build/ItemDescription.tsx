@@ -147,6 +147,7 @@ const ItemDescription: React.FC<Props> = ({ description, item }) => {
                         boxSize="1.2em"
                         position="relative"
                         marginRight="0.2em"
+                        marginLeft="1em"
                       >
                         <Image src={cooldown} alt="gold" layout="fill" />
                       </chakra.span>

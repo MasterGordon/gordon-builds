@@ -25,11 +25,12 @@ interface Props extends Build {
   heroData: any;
   abilities: any;
   itemData: any;
+  buildsList: any;
 }
 
 const Build: NextPage<Props> = (props) => {
   return (
-    <Layout>
+    <Layout builds={props.buildsList}>
       <Head>
         <title>{props.name} - Gordon Builds</title>
       </Head>
@@ -112,9 +113,8 @@ export async function getServerSideProps(context: NextPageContext) {
   const build = builds.find((b) => b.slug === slug);
 
   if (!build) return { notFound: true };
-  const heroData = (await getData("heroes")).find(
-    (hero) => hero.key === build.heroKey
-  );
+  const heroes = await getData("heroes");
+  const heroData = heroes.find((hero) => hero.key === build.heroKey);
   const abilities = (await getData("abilities"))
     .filter(
       (ability) =>
@@ -152,6 +152,8 @@ export async function getServerSideProps(context: NextPageContext) {
     name: build.name,
     heroKey: build.heroKey,
     version: build.version,
+    slug: build.slug,
+    heroName: heroes.find((hero) => hero.key === build.heroKey).name,
   }));
 
   return {

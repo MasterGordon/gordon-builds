@@ -3,7 +3,7 @@ import Content from "./Content";
 import Header from "./Header";
 import LatestBuilds from "./LatestBuilds";
 
-const Layout: React.FC = ({ children }) => {
+const Layout: React.FC<{ builds: any }> = ({ builds, children }) => {
   return (
     <>
       <Header />
@@ -15,7 +15,7 @@ const Layout: React.FC = ({ children }) => {
         gridTemplateColumns={{ lg: "1fr 300px" }}
       >
         <Content>{children}</Content>
-        {/*<LatestBuilds>Navigation</LatestBuilds>*/}
+        <LatestBuilds builds={builds}>Navigation</LatestBuilds>
       </Grid>
     </>
   );
