@@ -28,7 +28,7 @@ const ItemDescription: React.FC<Props> = ({ description, item }) => {
         borderTopRadius="sm"
       >
         <Img
-          src={`http://cdn.dota2.com/apps/dota2/images/items/${item.key.replace(
+          src={`https://cdn.dota2.com/apps/dota2/images/items/${item.key.replace(
             "item_",
             ""
           )}_lg.png`}
@@ -64,9 +64,9 @@ const ItemDescription: React.FC<Props> = ({ description, item }) => {
       >
         {item.custom_attributes && (
           <Box>
-            {item.custom_attributes.map((attr) => (
+            {item.custom_attributes.map((attr, index) => (
               <HStack
-                key={attr.key}
+                key={attr.key + index}
                 alignItems="start"
                 textShadow="1px 1px black"
                 spacing="1"
@@ -155,7 +155,11 @@ const ItemDescription: React.FC<Props> = ({ description, item }) => {
                     </>
                   )}
                 </Flex>
-                <Box color="gray.400">{description.body}</Box>
+                {description.body?.map((body, index) => (
+                  <Box color="gray.400" key={index}>
+                    {body}
+                  </Box>
+                ))}
               </Box>
             )
           )}
@@ -178,9 +182,23 @@ const ItemDescription: React.FC<Props> = ({ description, item }) => {
               fontSize="xs"
               fontStyle="italic"
               color="gray.400"
-              marginTop="8"
             >
               {item.lore}
+            </Box>
+          </>
+        )}
+        {description && (
+          <>
+            <Box />
+            <Box
+              backgroundColor="gray.900"
+              textShadow="1px 1px black"
+              padding="2"
+              fontSize="sm"
+              fontWeight="semibold"
+              color="white"
+            >
+              {description}
             </Box>
           </>
         )}

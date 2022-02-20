@@ -10,6 +10,7 @@ import {
 import Image from "next/image";
 import cooldown from "../../images/cooldown.png";
 import { Ability } from "../../provider/AbilityData";
+import { formatArray } from "../../utils/formatArray";
 
 interface Props {
   ability: Ability;
@@ -133,21 +134,19 @@ const AbilityDescription: React.FC<Props> = ({ ability }) => {
           </>
         )}
         {ability.custom_attributes &&
-          ability.custom_attributes.map(
-            (attr) =>
+          ability.custom_attributes.map((attr) => {
+            const value = formatArray(attr.value);
+            return (
               attr.value && (
                 <KV
                   label={attr.header}
-                  value={
-                    typeof attr.value === "object"
-                      ? attr.value?.join(" / ")
-                      : attr.value
-                  }
+                  value={Array.isArray(value) ? value?.join(" / ") : value}
                   color="gray.500"
                   key={attr.key}
                 />
               )
-          )}
+            );
+          })}
         {(ability.mana_cost || ability.cooldown) && (
           <HStack spacing="3" color="gray.500" alignItems="center">
             {ability.cooldown && (

@@ -1,4 +1,4 @@
-import { NextPage, NextPageContext } from "next";
+import { GetStaticProps, NextPage, NextPageContext } from "next";
 import Layout from "../../components/Layout";
 import builds from "../../builds";
 import { getData } from "../../provider/dota";
@@ -9,7 +9,7 @@ import {
   Heading,
   HStack,
   Img,
-  Tooltip,
+  VisuallyHidden,
   VStack,
 } from "@chakra-ui/react";
 import { MDXRemoteSerializeResult } from "next-mdx-remote";
@@ -18,7 +18,11 @@ import BuildDescription from "../../components/build/BuildDescription";
 import BuildItems from "../../components/build/BuildItems";
 import BuildHeader from "../../components/build/BuildHeader";
 import Head from "next/head";
-import AbilityDescription from "../../components/build/AbilityDescription";
+import BuildAbility from "../../components/build/BuildAbility";
+import TalentTree from "../../components/build/TalentTree";
+import meepo from "../../images/meepo.png";
+import troll from "../../images/troll.png";
+import Image from "next/image";
 
 interface Props extends Build {
   mdx: MDXRemoteSerializeResult;
@@ -41,6 +45,24 @@ const Build: NextPage<Props> = (props) => {
           name={props.name}
           heroName={props.heroData.name}
         />
+        <HStack>
+          <Heading as="h2" size="md">
+            Difficulty:{" "}
+          </Heading>
+          <VisuallyHidden>{props.complexity}</VisuallyHidden>
+          {[...new Array(props.complexity)].map((_, index) => (
+            <Image key={index} src={meepo} alt="" />
+          ))}
+        </HStack>
+        <HStack>
+          <Heading as="h2" size="md">
+            Troll Level:{" "}
+          </Heading>
+          <VisuallyHidden>{props.trollLevel}</VisuallyHidden>
+          {[...new Array(props.trollLevel)].map((_, index) => (
+            <Image key={index} src={troll} alt="" />
+          ))}
+        </HStack>
         <Heading as="h2" size="md">
           Item Build
         </Heading>
@@ -54,62 +76,63 @@ const Build: NextPage<Props> = (props) => {
           width="100%"
         >
           <VStack alignItems="start">
-            {props.heroData.abilities.map((ability: string, index: number) => {
-              return ability != "generic_hidden" ? (
-                <HStack key={ability}>
-                  <Tooltip
-                    padding="0"
-                    backgroundColor="rgba(0, 0, 0, 1)"
-                    borderRadius="md"
-                    maxWidth="370px"
-                    key={index}
-                    label={
-                      <AbilityDescription ability={props.abilities[ability]} />
-                    }
-                    boxShadow="2px 2px 8px 8px rgba(0,0,0,0.75)"
-                    hasArrow
-                    placement="right"
-                  >
-                    <Img
-                      width={["10", "16"]}
-                      alt={ability}
-                      src={`https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/abilities/${ability}.png`}
+            {props.heroData.abilities
+              .slice(0, 6)
+              .map((ability: string, index: number) => {
+                return ability != "generic_hidden" ? (
+                  <HStack key={ability}>
+                    <BuildAbility
+                      ability={ability}
+                      abilityData={props.abilities[ability]}
                     />
-                  </Tooltip>
-                  <HStack>
-                    {props.skills[index]
-                      .split("")
-                      .map((letter: string, index: number) => {
-                        return (
-                          <Center
-                            userSelect="none"
-                            key={index}
-                            bg={letter == "X" ? "yellow.600" : "gray.800"}
-                            p={1}
-                            boxSize={["2em", "2em", "2em", "2.5em"]}
-                            textAlign="center"
-                            fontSize="sm"
-                            fontWeight="bold"
-                            color="black"
-                          >
-                            {letter == "X" ? index + 1 : " "}
-                          </Center>
-                        );
-                      })}
+                    <HStack>
+                      {props.skills[index]
+                        .split("")
+                        .map((letter: string, index: number) => {
+                          return (
+                            <Center
+                              userSelect="none"
+                              key={index}
+                              bg={letter == "X" ? "yellow.600" : "gray.800"}
+                              p={1}
+                              boxSize={["2em", "2em", "2em", "2.5em"]}
+                              textAlign="center"
+                              fontSize="sm"
+                              fontWeight="bold"
+                              color="black"
+                            >
+                              {letter == "X" ? index + 1 : " "}
+                            </Center>
+                          );
+                        })}
+                    </HStack>
                   </HStack>
-                </HStack>
-              ) : undefined;
-            })}
+                ) : undefined;
+              })}
           </VStack>
         </Box>
+        <Heading as="h2" size="md">
+          Talents
+        </Heading>
+        <TalentTree
+          talents={props.talents}
+          talentNames={props.heroData.talents.map(
+            (talent: string) => props.abilities[talent].name
+          )}
+        />
         <BuildDescription mdx={props.mdx} />
       </VStack>
     </Layout>
   );
 };
 
-export async function getServerSideProps(context: NextPageContext) {
-  const { slug } = context.query;
+export const getStaticProps: GetStaticProps = async (context) => {
+  if (!context.params) {
+    return {
+      notFound: true,
+    };
+  }
+  const { slug } = context.params;
   const build = builds.find((b) => b.slug === slug);
 
   if (!build) return { notFound: true };
@@ -159,6 +182,13 @@ export async function getServerSideProps(context: NextPageContext) {
   return {
     props: { ...build, mdx, heroData, abilities, itemData, buildsList },
   };
+};
+export async function getStaticPaths() {
+  return {
+    paths: builds.map((build) => ({
+      params: { slug: build.slug },
+    })),
+    fallback: false,
+  };
 }
-
 export default Build;

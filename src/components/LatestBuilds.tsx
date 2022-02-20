@@ -1,20 +1,28 @@
 import { Box, Flex, Heading, HStack, Img, VStack } from "@chakra-ui/react";
 import Link from "next/link";
 
-interface LatestBuildsProps {
+export interface LatestBuildsProps {
   builds: {
     name: string;
     heroKey: string;
     version: string;
     slug: string;
     heroName: string;
+    shortDescription: string;
   }[];
 }
 
 const LatestBuilds: React.FC<LatestBuildsProps> = ({ builds }) => {
   return (
     <Flex alignItems="baseline">
-      <Box padding="4" borderRadius="md" backgroundColor="gray.700">
+      <VStack
+        spacing={4}
+        padding="4"
+        borderRadius="md"
+        backgroundColor="gray.700"
+        width="100%"
+        alignItems="start"
+      >
         <Heading size="lg" fontWeight="semibold" color="white" marginBottom="4">
           Latest builds
         </Heading>
@@ -50,7 +58,7 @@ const LatestBuilds: React.FC<LatestBuildsProps> = ({ builds }) => {
             </HStack>
           </Link>
         ))}
-      </Box>
+      </VStack>
     </Flex>
   );
 };

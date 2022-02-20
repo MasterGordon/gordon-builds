@@ -2,7 +2,11 @@ import { Build } from "./Build";
 
 export const dipsWeaver: Build = {
   name: "Dips Weaver",
+  complexity: 2,
+  trollLevel: 1,
   slug: "dips-weaver",
+  shortDescription:
+    "The DiPS Weaver is a carry build for Weaver that can be played as pos 1 or 3. It's goal is to get cheap kills and scale hard on damage.",
   description: `
 # Gameplay
 The Dips Weaver is a versatile build that can be used to play any type of game.
@@ -23,7 +27,7 @@ If the enemy buys wards just laugh at them.
     "",
     "     X     X     X",
   ],
-  talents: ["   X", "XXX"],
+  talents: ["   X", "XXX "],
   items: {
     "Starting Items": [
       { key: "item_tango" },

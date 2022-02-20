@@ -1,4 +1,5 @@
 import axios from "axios";
+import { formatArray } from "../utils/formatArray";
 
 const baseURL =
   process.env.BASE_URL ||
@@ -36,7 +37,6 @@ export async function getData(type) {
     cacheTime[type] > Date.now() - 30 * 60 * 1000 &&
     process.env.NODE_ENV != "production"
   ) {
-    console.log(`Using cached ${type} data`);
     return cache[type];
   }
   const source = sources[type];
@@ -105,7 +105,7 @@ const replaceAttributes = (description, attributes) => {
     let attr = attributes.find((a) => name in a);
 
     if (attr) {
-      return attr[name];
+      return formatArray(attr[name]);
     } else {
       return name;
     }
@@ -166,7 +166,16 @@ class AbilitiesSerializer {
         };
 
         if (ability.type === "talent") {
-          return ability;
+          if (!raw.AbilitySpecial || raw.AbilitySpecial.length === 0) {
+            return ability;
+          }
+          return {
+            ...ability,
+            name: ability.name?.replace(
+              "{s:value}",
+              raw.AbilitySpecial[0].value
+            ),
+          };
         }
 
         const description = this.getString(key, "Description");
@@ -251,7 +260,6 @@ class AbilitiesSerializer {
       return "Unit Target";
     if (type.includes("DOTA_ABILITY_BEHAVIOR_NO_TARGET")) return "No Target";
     if (type.includes("DOTA_ABILITY_BEHAVIOR_POINT")) return "Point Target";
-    console.error(`Unknown ability type: ${type}`);
   }
 
   getNotes(key, attributes) {

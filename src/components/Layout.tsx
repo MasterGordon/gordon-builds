@@ -12,7 +12,7 @@ const Layout: React.FC<{ builds: any }> = ({ builds, children }) => {
         maxWidth="1300px"
         padding="4"
         gap="4"
-        gridTemplateColumns={{ lg: "1fr 300px" }}
+        gridTemplateColumns={{ xl: "1fr 350px" }}
       >
         <Content>{children}</Content>
         <LatestBuilds builds={builds}>Navigation</LatestBuilds>

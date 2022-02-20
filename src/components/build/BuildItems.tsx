@@ -1,15 +1,7 @@
-import {
-  Heading,
-  HStack,
-  Img,
-  Tooltip,
-  VStack,
-  Wrap,
-  WrapItem,
-} from "@chakra-ui/react";
+import { Heading, HStack, VStack, Wrap, WrapItem } from "@chakra-ui/react";
 import { Build } from "../../builds/Build";
 import { Item } from "../../provider/ItemData";
-import ItemDescription from "./ItemDescription";
+import BuildItem from "./BuildItem";
 
 interface Props {
   items: Build["items"];
@@ -34,26 +26,15 @@ const BuildItems: React.FC<Props> = (props) => {
             {category}
           </Heading>
           <Wrap as={HStack} spacing="2">
-            {items[category].map((item, index) => (
-              <Tooltip
-                padding="0"
-                backgroundColor="rgba(0, 0, 0, 1)"
-                borderRadius="md"
-                key={index}
-                label={<ItemDescription item={itemData[item.key]} />}
-                boxShadow="2px 2px 8px 8px rgba(0,0,0,0.75)"
-              >
-                <WrapItem
-                  as={Img}
-                  src={`http://cdn.dota2.com/apps/dota2/images/items/${item.key.replace(
-                    "item_",
-                    ""
-                  )}_lg.png`}
-                  alt={item.key}
-                  height={["2em", "2.5em", "3em"]}
+            {items[category].map((item, index) => {
+              return (
+                <BuildItem
+                  key={item.key + index}
+                  item={item}
+                  itemData={itemData}
                 />
-              </Tooltip>
-            ))}
+              );
+            })}
           </Wrap>
         </WrapItem>
       ))}

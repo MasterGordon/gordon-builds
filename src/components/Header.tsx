@@ -78,7 +78,7 @@ const HeaderNavigation: React.FC = ({ children }) => {
 
 const Header: React.FC = () => {
   return (
-    <Flex backgroundColor="red.900">
+    <Flex backgroundColor="red.900" zIndex="50" position="relative">
       <Heading padding="4" as="h1" color="gray.50">
         Gordon Builds
       </Heading>
