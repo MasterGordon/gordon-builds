@@ -15,7 +15,7 @@ const Layout: React.FC = ({ children }) => {
         gridTemplateColumns={{ lg: "1fr 300px" }}
       >
         <Content>{children}</Content>
-        <LatestBuilds>Navigation</LatestBuilds>
+        {/*<LatestBuilds>Navigation</LatestBuilds>*/}
       </Grid>
     </>
   );

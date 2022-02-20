@@ -1,6 +1,14 @@
 import { Box } from "@chakra-ui/react";
 
-const LatestBuilds: React.FC = ({ children }) => {
+interface LatestBuildsProps {
+  builds: {
+    name: string;
+    heroKey: string;
+    version: string;
+  }[];
+}
+
+const LatestBuilds: React.FC<LatestBuildsProps> = ({ children }) => {
   return (
     <Box padding="4" borderRadius="md" backgroundColor="gray.700">
       {children}

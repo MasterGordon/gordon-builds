@@ -1,7 +1,17 @@
-import { Box, chakra, Heading, HStack, Img, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  chakra,
+  Flex,
+  Heading,
+  HStack,
+  Img,
+  Spacer,
+  VStack,
+} from "@chakra-ui/react";
 import { Item } from "../../provider/ItemData";
 import Image from "next/image";
 import gold from "../../images/gold.png";
+import cooldown from "../../images/cooldown.png";
 
 interface Props {
   description?: string;
@@ -86,14 +96,67 @@ const ItemDescription: React.FC<Props> = ({ description, item }) => {
               <Box
                 backgroundColor="gray.700"
                 textShadow="1px 1px black"
+                key={description.header}
                 padding="2"
               >
-                <Box color="white" fontWeight="bold">
+                <Box color="white" fontWeight="bold" key={description.header}>
                   Passive: {description.header}
                 </Box>
                 <Box color="gray.400">{description.body}</Box>
               </Box>
-            ) : undefined
+            ) : description.type == "hint" ? (
+              <Box
+                backgroundColor="gray.700"
+                textShadow="1px 1px black"
+                key={description.header}
+                padding="2"
+                color="gray.400"
+              >
+                {description.body}
+              </Box>
+            ) : (
+              <Box
+                backgroundColor="activeBlue"
+                textShadow="1px 1px black"
+                key={description.header}
+                padding="2"
+              >
+                <Flex
+                  color="white"
+                  fontWeight="bold"
+                  key={description.header}
+                  alignItems="center"
+                >
+                  Active: {description.header}
+                  <Spacer />
+                  {item.mana_cost && (
+                    <>
+                      <chakra.span
+                        boxSize="1.2em"
+                        borderRadius="sm"
+                        position="relative"
+                        marginRight="0.2em"
+                        backgroundColor="manacostBlue"
+                      />
+                      {item.mana_cost}
+                    </>
+                  )}
+                  {item.cooldown && (
+                    <>
+                      <chakra.span
+                        boxSize="1.2em"
+                        position="relative"
+                        marginRight="0.2em"
+                      >
+                        <Image src={cooldown} alt="gold" layout="fill" />
+                      </chakra.span>
+                      {item.cooldown}
+                    </>
+                  )}
+                </Flex>
+                <Box color="gray.400">{description.body}</Box>
+              </Box>
+            )
           )}
         {item.notes && item.notes?.length > 0 && (
           <Box backgroundColor="gray.700" padding="2">

@@ -30,8 +30,13 @@ const sources = {
  * @returns {Promise<any[]>}
  */
 export async function getData(type) {
-  // Return if cache is not older that 30 minutes
-  if (cache[type] && cacheTime[type] > Date.now() - 30 * 60 * 1000) {
+  // Return if cache is not older than 30 minutes
+  if (
+    cache[type] &&
+    cacheTime[type] > Date.now() - 30 * 60 * 1000 &&
+    process.env.NODE_ENV != "production"
+  ) {
+    console.log(`Using cached ${type} data`);
     return cache[type];
   }
   const source = sources[type];
@@ -169,13 +174,16 @@ class AbilitiesSerializer {
 
         ability.description =
           description && this.getDescription(description, attributes);
-        ability.notes = this.getNotes(key);
+        ability.notes = this.getNotes(key, attributes);
         ability.lore = this.getString(key, "Lore");
         ability.team_target = this.teamTargets[raw.AbilityUnitTargetTeam];
         ability.unit_targets =
           raw.AbilityUnitTargetType &&
           this.getUnitTargets(raw.AbilityUnitTargetType);
         ability.damage_type = this.damageTypes[raw.AbilityUnitDamageType];
+        ability.kind = this.getType(raw.AbilityBehavior);
+        ability.spell_dispellable_type =
+          this.spellDispellableTypes[raw.SpellDispellableType];
         ability.pierces_spell_immunity =
           this.spellImmunityTypes[raw.SpellImmunityType];
         ability.cast_range =
@@ -230,11 +238,29 @@ class AbilitiesSerializer {
     return formatDescription(replaceAttributes(description, attributes));
   }
 
-  getNotes(key) {
+  /**
+   * @param {string} type
+   * */
+  getType(type) {
+    if (!type) return undefined;
+    if (type.includes("DOTA_ABILITY_BEHAVIOR_CHANNELLED")) return "Channeled";
+    if (type.includes("DOTA_ABILITY_BEHAVIOR_AUTOCAST")) return "Auto-Cast";
+    if (type.includes("DOTA_ABILITY_BEHAVIOR_TOGGLE")) return "Toggle";
+    if (type.includes("DOTA_ABILITY_BEHAVIOR_PASSIVE")) return "Passive";
+    if (type.includes("DOTA_ABILITY_BEHAVIOR_UNIT_TARGET"))
+      return "Unit Target";
+    if (type.includes("DOTA_ABILITY_BEHAVIOR_NO_TARGET")) return "No Target";
+    if (type.includes("DOTA_ABILITY_BEHAVIOR_POINT")) return "Point Target";
+    console.error(`Unknown ability type: ${type}`);
+  }
+
+  getNotes(key, attributes) {
     const notes = [];
 
     for (let i = 0; this.getString(key, `Note${i}`); i++) {
-      notes.push(this.getString(key, `Note${i}`));
+      notes.push(
+        replaceAttributes(this.getString(key, `Note${i}`), attributes)
+      );
     }
 
     return notes;
@@ -283,6 +309,14 @@ class AbilitiesSerializer {
       DAMAGE_TYPE_MAGICAL: "magical",
       DAMAGE_TYPE_PHYSICAL: "physical",
       DAMAGE_TYPE_PURE: "pure",
+    };
+  }
+
+  get spellDispellableTypes() {
+    return {
+      SPELL_DISPELLABLE_NO: "Cannot be dispelled",
+      SPELL_DISPELLABLE_YES: "Yes",
+      SPELL_DISPELLABLE_YES_STRONG: "Strong Dispels Only",
     };
   }
 
@@ -407,7 +441,7 @@ class ItemsSerializer {
           name: stripExtraWhitespace(this.getName(key, raw.ItemBaseLevel)),
           description:
             description && this.getDescription(description, attributes),
-          notes: this.getNotes(key),
+          notes: this.getNotes(key, attributes),
           lore: this.getString(key, "Lore"),
           recipe: key.startsWith("item_recipe"),
           cost: raw.ItemCost && parseInt(raw.ItemCost, 10),
@@ -488,11 +522,13 @@ class ItemsSerializer {
     }
   }
 
-  getNotes(key) {
+  getNotes(key, attributes) {
     const notes = [];
 
     for (let i = 0; this.getString(key, `Note${i}`); i++) {
-      notes.push(this.getString(key, `Note${i}`));
+      notes.push(
+        replaceAttributes(this.getString(key, `Note${i}`), attributes)
+      );
     }
 
     return notes;

@@ -18,6 +18,7 @@ import BuildDescription from "../../components/build/BuildDescription";
 import BuildItems from "../../components/build/BuildItems";
 import BuildHeader from "../../components/build/BuildHeader";
 import Head from "next/head";
+import AbilityDescription from "../../components/build/AbilityDescription";
 
 interface Props extends Build {
   mdx: MDXRemoteSerializeResult;
@@ -27,7 +28,6 @@ interface Props extends Build {
 }
 
 const Build: NextPage<Props> = (props) => {
-  console.log(props);
   return (
     <Layout>
       <Head>
@@ -57,23 +57,20 @@ const Build: NextPage<Props> = (props) => {
               return ability != "generic_hidden" ? (
                 <HStack key={ability}>
                   <Tooltip
+                    padding="0"
+                    backgroundColor="rgba(0, 0, 0, 1)"
+                    borderRadius="md"
+                    maxWidth="370px"
+                    key={index}
                     label={
-                      <Box>
-                        <Heading as="h3" size="sm">
-                          {props.abilities[ability].name}
-                        </Heading>
-                        {props.abilities[ability].description.map(
-                          (description: string, index: number) => (
-                            <Box key={index}>{description}</Box>
-                          )
-                        )}
-                      </Box>
+                      <AbilityDescription ability={props.abilities[ability]} />
                     }
+                    boxShadow="2px 2px 8px 8px rgba(0,0,0,0.75)"
                     hasArrow
                     placement="right"
                   >
                     <Img
-                      width={["10", "20"]}
+                      width={["10", "16"]}
                       alt={ability}
                       src={`https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/abilities/${ability}.png`}
                     />
@@ -151,9 +148,14 @@ export async function getServerSideProps(context: NextPageContext) {
       return acc;
     }, {});
   const mdx = await serialize(build.description);
+  const buildsList = builds.map((build) => ({
+    name: build.name,
+    heroKey: build.heroKey,
+    version: build.version,
+  }));
 
   return {
-    props: { ...build, mdx, heroData, abilities, itemData },
+    props: { ...build, mdx, heroData, abilities, itemData, buildsList },
   };
 }
 

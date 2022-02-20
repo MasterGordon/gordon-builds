@@ -3,11 +3,12 @@ export interface Ability {
   key: string;
   name: string;
   type: string;
+  kind: string;
   description?: string[] | string;
   notes?: string[];
   has_scepter_upgrade?: boolean;
   is_granted_by_scepter?: boolean;
-  damage_type?: string;
+  damage_type?: "physical" | "magical" | "pure";
   custom_attributes?: CustomAttribute[];
   team_target?: string;
   unit_targets?: string[];
@@ -20,6 +21,7 @@ export interface Ability {
   channel_time?: number[];
   damage?: number[];
   duration?: number[];
+  spell_dispellable_type?: string;
 }
 
 export interface CustomAttribute {

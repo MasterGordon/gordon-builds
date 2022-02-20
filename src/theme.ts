@@ -21,6 +21,13 @@ const theme = {
     c5: "#7e71a3",
     c6: "#b0a3d4",
     c7: "#d3c6f6",
+    activeBlue: "#2e3b5c",
+    manacostBlue: "#009dd2",
+    dmgPhysical: "#ac2f29",
+    dmgMagical: "#5589c1",
+    dmgPure: "#d8af54",
+    spellPierces: "#71ea73",
+    disspellRed: "#b80405",
   },
   semanticTokens: {
     colors: {
