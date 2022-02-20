@@ -4,6 +4,7 @@ import Background from "../images/midlane-background.png";
 import Image from "next/image";
 import Header from "../components/Header";
 import Head from "next/head";
+import Footer from "../components/Footer";
 
 const Home: NextPage = () => {
   return (
