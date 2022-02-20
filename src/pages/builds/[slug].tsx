@@ -37,6 +37,10 @@ const Build: NextPage<Props> = (props) => {
     <Layout builds={props.buildsList}>
       <Head>
         <title>{props.name} - Gordon Builds</title>
+        <meta
+          name="description"
+          content={props.name + " - " + props.shortDescription}
+        />
       </Head>
       <VStack alignItems="start">
         <BuildHeader

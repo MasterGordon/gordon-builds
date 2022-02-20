@@ -21,6 +21,7 @@ const Builds: NextPage<LatestBuildsProps> = (props) => {
     <>
       <Head>
         <title>Latest Builds - Gordon Builds</title>
+        <meta name="description" content="Latest builds from Gordon Builds" />
       </Head>
       <Header />
       <Box

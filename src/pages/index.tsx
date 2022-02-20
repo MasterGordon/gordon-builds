@@ -4,7 +4,6 @@ import Background from "../images/midlane-background.png";
 import Image from "next/image";
 import Header from "../components/Header";
 import Head from "next/head";
-import Footer from "../components/Footer";
 
 const Home: NextPage = () => {
   return (
@@ -12,6 +11,10 @@ const Home: NextPage = () => {
       <Header />
       <Head>
         <title>Most Fun Dota 2 Builds - Gordon Builds</title>
+        <meta
+          name="description"
+          content="Most fun Dota 2 builds with focus on fun, but also on winning!"
+        />
       </Head>
       <Box height="calc(100vh - 75px)">
         <Center height="100%">
