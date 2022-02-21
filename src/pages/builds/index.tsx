@@ -89,7 +89,7 @@ const Builds: NextPage<LatestBuildsProps> = (props) => {
   );
 };
 
-export async function getServerSideProps(context: NextPageContext) {
+export async function getStaticProps(context: NextPageContext) {
   const heroes = await getData("heroes");
   const buildsList = builds.map((build) => ({
     name: build.name,
