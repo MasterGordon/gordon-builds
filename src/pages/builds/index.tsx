@@ -89,7 +89,7 @@ const Builds: NextPage<LatestBuildsProps> = (props) => {
   );
 };
 
-export async function getStaticProps(context: NextPageContext) {
+export const getStaticProps: GetStaticProps = async (context) => {
   const heroes = await getData("heroes");
   const buildsList = builds.map((build) => ({
     name: build.name,
