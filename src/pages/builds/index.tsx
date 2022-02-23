@@ -7,7 +7,7 @@ import {
   Img,
   VStack,
 } from "@chakra-ui/react";
-import { NextPage, NextPageContext } from "next";
+import { GetStaticProps, NextPage, NextPageContext } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import builds from "../../builds";
