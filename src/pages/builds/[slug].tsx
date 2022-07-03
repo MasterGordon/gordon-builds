@@ -1,4 +1,4 @@
-import { GetStaticProps, NextPage, NextPageContext } from "next";
+import { GetStaticProps, NextPage } from "next";
 import Layout from "../../components/Layout";
 import builds from "../../builds";
 import { getData } from "../../provider/dota";
