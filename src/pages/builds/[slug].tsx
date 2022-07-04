@@ -8,7 +8,6 @@ import {
   Center,
   Heading,
   HStack,
-  Img,
   VisuallyHidden,
   VStack,
 } from "@chakra-ui/react";
@@ -158,14 +157,9 @@ export const getStaticProps: GetStaticProps = async (context) => {
   if (!heroData) return { notFound: true };
   const itemData = (await getData("items"))
     .filter((item) =>
-      Object.keys(build.items).reduce<boolean>((acc, category) => {
-        return (
-          acc ||
-          !!build.items[category].find(
-            (buildItem) => item.key === buildItem.key
-          )
-        );
-      }, false)
+      Object.values(build.items)
+        .flat()
+        .some((buildItem) => buildItem.key === item.key)
     )
     .map((item) => {
       return JSON.parse(JSON.stringify(item));

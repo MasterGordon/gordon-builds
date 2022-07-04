@@ -45,6 +45,7 @@ const LatestBuilds: React.FC<LatestBuildsProps> = ({ builds }) => {
                 display="inline-block"
                 alt={build.heroKey}
                 height="3em"
+                width={(16 / 9) * 3 + "em"}
                 mr={4}
               />
               <VStack alignItems="start" spacing="1">

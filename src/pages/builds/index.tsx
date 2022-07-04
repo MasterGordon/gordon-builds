@@ -7,7 +7,7 @@ import {
   Img,
   VStack,
 } from "@chakra-ui/react";
-import { GetStaticProps, NextPage, NextPageContext } from "next";
+import { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import builds from "../../builds";
@@ -64,9 +64,10 @@ const Builds: NextPage<LatestBuildsProps> = (props) => {
                         "npc_dota_hero_",
                         ""
                       )}.png`}
+                      height="3em"
+                      width={(16 / 9) * 3 + "em"}
                       display="inline-block"
                       alt={build.heroKey}
-                      height="3em"
                       mr={4}
                     />
                     <VStack alignItems="start" spacing="1">
@@ -105,6 +106,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
       builds: buildsList,
     },
   };
-}
+};
 
 export default Builds;

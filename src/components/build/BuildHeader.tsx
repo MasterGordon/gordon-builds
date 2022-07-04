@@ -20,6 +20,7 @@ const BuildHeader: React.FC<Props> = (props) => {
         display="inline-block"
         alt={heroKey}
         height="5em"
+        width={(16 / 9) * 5 + "em"}
         mr={4}
       />
       <VStack alignItems="start" spacing="1">

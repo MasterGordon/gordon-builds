@@ -23,6 +23,8 @@ interface Props {
   itemData: { [key: string]: Item };
 }
 
+const imgRatio = 4 / 3;
+
 const BuildItem: React.FC<Props> = (props) => {
   const { item, itemData } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -49,6 +51,11 @@ const BuildItem: React.FC<Props> = (props) => {
           )}_lg.png`}
           alt={item.key}
           height={["2em", "2.5em", "3em"]}
+          width={[
+            imgRatio * 2 + "em",
+            imgRatio * 2.5 + "em",
+            imgRatio * 3 + "em",
+          ]}
           onClick={() => isTouchDevice() && onOpen()}
         />
       </Tooltip>
