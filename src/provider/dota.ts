@@ -1,36 +1,55 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import axios from "axios";
 import { formatArray } from "../utils/formatArray";
+import { Ability } from "./AbilityData";
+import { Hero } from "./HeroData";
+import { Item } from "./ItemData";
 
 const baseURL =
   process.env.BASE_URL ||
   "https://raw.githubusercontent.com/dotabuff/d2vpkr/master";
 
-const cache = {};
-const cacheTime = {};
+type DataType = "heroes" | "items" | "abilities";
 
-const sources = {
+const cache: Partial<Record<DataType, any>> = {};
+const cacheTime: Partial<Record<DataType, number>> = {};
+
+type Sources = Record<
+  DataType,
+  {
+    dataURL: string;
+    i18nURL1?: string;
+    i18nURL2?: string;
+    serializer: (data: any, i18n: any) => any;
+  }
+>;
+const sources: Sources = {
   abilities: {
     dataURL: `${baseURL}/dota/scripts/npc/npc_abilities.json`,
     i18nURL1: `${baseURL}/dota/resource/localization/abilities_english.json`,
-    serializer: (data, i18n) => new AbilitiesSerializer(data, i18n),
+    serializer: (data: any, i18n: any) => new AbilitiesSerializer(data, i18n),
   },
   heroes: {
     dataURL: `${baseURL}/dota/scripts/npc/npc_heroes.json`,
-    serializer: (data) => new HeroesSerializer(data),
+    serializer: (data: any) => new HeroesSerializer(data),
   },
   items: {
     dataURL: `${baseURL}/dota/scripts/npc/items.json`,
     i18nURL1: `${baseURL}/dota/resource/localization/dota_english.json`,
     i18nURL2: `${baseURL}/dota/resource/localization/abilities_english.json`,
-    serializer: (data, i18n) => new ItemsSerializer(data, i18n),
+    serializer: (data: any, i18n: any) => new ItemsSerializer(data, i18n),
   },
 };
 
-/**
- * @argument {"abilities" | "items" | "heroes"} type
- * @returns {Promise<any[]>}
- */
-export async function getData(type) {
+type GetDataReturn = {
+  abilities: Ability[];
+  items: Item[];
+  heroes: Hero[];
+};
+
+export async function getData<T extends "abilities" | "items" | "heroes">(
+  type: T
+): Promise<GetDataReturn[T]> {
   // Return if cache is not older than 30 minutes
   if (
     cache[type] &&
@@ -41,8 +60,8 @@ export async function getData(type) {
   }
   const source = sources[type];
   const promises = [source.dataURL, source.i18nURL1, source.i18nURL2]
-    .filter((u) => u)
-    .map((url) => axios.get(url));
+    .filter((u) => typeof u === "string")
+    .map((url) => axios.get(url as string));
   const responses = await Promise.all(promises);
   const data = responses[0].data;
   const i18n = responses[1] && responses[1].data;
@@ -55,7 +74,7 @@ export async function getData(type) {
   return body;
 }
 
-const fixStringsCase = (obj) => {
+const fixStringsCase = (obj: Record<string, string>) => {
   const strings = Object.assign({}, obj);
 
   Object.keys(obj).forEach((key) => {
@@ -68,33 +87,33 @@ const fixStringsCase = (obj) => {
   return strings;
 };
 
-const stripExtraWhitespace = (str) => {
+const stripExtraWhitespace = (str: string) => {
   return str && str.replace(/\s{2,}/g, " ").trim();
 };
 
-const stripHTMLTags = (str) => {
+const stripHTMLTags = (str: string) => {
   return str.replace(/<[^>]*>/g, "");
 };
 
-const toObject = (obj) => {
+const toObject = (obj: unknown[]) => {
   return !Array.isArray(obj) ? Object.values(obj) : obj;
 };
 
-const toNumericSet = (str) => {
+const toNumericSet = (str: string) => {
   return str
     .split(" ")
     .map(Number)
     .filter((v, i, arr) => arr.indexOf(v) === i);
 };
 
-const formatDescription = (description) => {
+const formatDescription = (description: string) => {
   return description
     .split(/(?:\\n|<br>)/)
     .map(stripHTMLTags)
     .map(stripExtraWhitespace);
 };
 
-const replaceAttributes = (description, attributes) => {
+const replaceAttributes = (description: string, attributes: any[]) => {
   if (!attributes) return description;
 
   return description.replace(/%([^% ]*)%/g, (_, name) => {
@@ -102,7 +121,7 @@ const replaceAttributes = (description, attributes) => {
       return "%";
     }
 
-    let attr = attributes.find((a) => name in a);
+    const attr = attributes.find((a) => name in a);
 
     if (attr) {
       return formatArray(attr[name]);
@@ -112,10 +131,14 @@ const replaceAttributes = (description, attributes) => {
   });
 };
 
-const formatCustomAttributes = (attributes, strings, ability_key) => {
+const formatCustomAttributes = (
+  attributes: any[],
+  strings: Record<string, string>,
+  ability_key: string
+) => {
   return attributes
     .map((attr) => {
-      let key = Object.keys(attr).find(
+      const key = Object.keys(attr).find(
         (key) => `DOTA_Tooltip_ability_${ability_key}_${key}` in strings
       );
 
@@ -149,7 +172,10 @@ const formatCustomAttributes = (attributes, strings, ability_key) => {
 };
 
 class AbilitiesSerializer {
-  constructor(data, i18n) {
+  private data: any;
+  private strings: any;
+
+  constructor(data: any, i18n: any) {
     this.data = data;
     this.strings = fixStringsCase(i18n.lang.Tokens);
   }
@@ -158,7 +184,7 @@ class AbilitiesSerializer {
     return this.keys
       .map((key) => {
         const raw = this.abilities[key];
-        const ability = {
+        const ability: any = {
           id: Number(raw.ID),
           key: key,
           name: stripExtraWhitespace(this.getString(key)),
@@ -185,15 +211,19 @@ class AbilitiesSerializer {
           description && this.getDescription(description, attributes);
         ability.notes = this.getNotes(key, attributes);
         ability.lore = this.getString(key, "Lore");
+        // @ts-ignore
         ability.team_target = this.teamTargets[raw.AbilityUnitTargetTeam];
         ability.unit_targets =
           raw.AbilityUnitTargetType &&
           this.getUnitTargets(raw.AbilityUnitTargetType);
+        // @ts-ignore
         ability.damage_type = this.damageTypes[raw.AbilityUnitDamageType];
         ability.kind = this.getType(raw.AbilityBehavior);
         ability.spell_dispellable_type =
+          // @ts-ignore
           this.spellDispellableTypes[raw.SpellDispellableType];
         ability.pierces_spell_immunity =
+          // @ts-ignore
           this.spellImmunityTypes[raw.SpellImmunityType];
         ability.cast_range =
           raw.AbilityCastRange && toNumericSet(raw.AbilityCastRange);
@@ -239,18 +269,15 @@ class AbilitiesSerializer {
     ];
   }
 
-  getString(key, suffix = "") {
+  getString(key: string, suffix = "") {
     return this.strings[`DOTA_Tooltip_ability_${key}${suffix && `_${suffix}`}`];
   }
 
-  getDescription(description, attributes) {
+  getDescription(description: string, attributes: any[]) {
     return formatDescription(replaceAttributes(description, attributes));
   }
 
-  /**
-   * @param {string} type
-   * */
-  getType(type) {
+  getType(type: string) {
     if (!type) return undefined;
     if (type.includes("DOTA_ABILITY_BEHAVIOR_CHANNELLED")) return "Channeled";
     if (type.includes("DOTA_ABILITY_BEHAVIOR_AUTOCAST")) return "Auto-Cast";
@@ -262,7 +289,7 @@ class AbilitiesSerializer {
     if (type.includes("DOTA_ABILITY_BEHAVIOR_POINT")) return "Point Target";
   }
 
-  getNotes(key, attributes) {
+  getNotes(key: string, attributes: any) {
     const notes = [];
 
     for (let i = 0; this.getString(key, `Note${i}`); i++) {
@@ -274,21 +301,24 @@ class AbilitiesSerializer {
     return notes;
   }
 
-  getUnitTargets(targets) {
-    return targets
-      .split(" | ")
-      .map((t) => this.unitTargets[t])
-      .filter((t) => t);
+  getUnitTargets(targets: string) {
+    return (
+      targets
+        .split(" | ")
+        // @ts-ignore
+        .map((t) => this.unitTargets[t])
+        .filter((t) => t)
+    );
   }
 
-  get abilityTypes() {
+  get abilityTypes(): Record<string, string> {
     return new Proxy(
       {
         DOTA_ABILITY_TYPE_ATTRIBUTES: "talent",
         DOTA_ABILITY_TYPE_ULTIMATE: "ultimate",
       },
       {
-        get: (dict, k) => dict[k] || "basic",
+        get: (dict, k) => dict[k as keyof typeof dict] || "basic",
       }
     );
   }
@@ -339,7 +369,9 @@ class AbilitiesSerializer {
 }
 
 class HeroesSerializer {
-  constructor(data) {
+  private data: any;
+
+  constructor(data: any) {
     this.data = data;
   }
 
@@ -352,8 +384,9 @@ class HeroesSerializer {
           id: Number(raw.HeroID),
           key: key,
           name: raw.workshop_guide_name,
-          roles: raw.Role.split(",").map((r) => r.toLowerCase()),
+          roles: (raw.Role as string).split(",").map((r) => r.toLowerCase()),
           complexity: Number(raw.Complexity),
+          // @ts-ignore
           primary_attribute: this.primaryAttributes[raw.AttributePrimary],
           base_str: Number(raw.AttributeBaseStrength),
           base_agi: Number(raw.AttributeBaseAgility),
@@ -365,6 +398,7 @@ class HeroesSerializer {
           base_mana: Number(raw.StatusMana),
           base_health_regen: Number(raw.StatusHealthRegen),
           base_mana_regen: Number(raw.StatusManaRegen),
+          // @ts-ignore
           attack_type: this.attackTypes[raw.AttackCapabilities],
           attack_range: Number(raw.AttackRange),
           attack_rate: Number(raw.AttackRate),
@@ -414,14 +448,14 @@ class HeroesSerializer {
     };
   }
 
-  getAbilities(raw) {
+  getAbilities(raw: any) {
     return Object.keys(raw)
       .filter((k) => k.match(/Ability([1-9]$)/))
       .map((k) => raw[k])
       .filter((a) => a);
   }
 
-  getTalents(raw) {
+  getTalents(raw: any) {
     return Object.keys(raw)
       .filter((k) => k.match(/Ability([1-9]\d+$)/))
       .map((k) => raw[k])
@@ -430,7 +464,10 @@ class HeroesSerializer {
 }
 
 class ItemsSerializer {
-  constructor(data, i18n) {
+  private data: any;
+  private strings: any;
+
+  constructor(data: any, i18n: any) {
     this.data = data;
     this.strings = fixStringsCase(i18n.lang.Tokens);
   }
@@ -461,6 +498,7 @@ class ItemsSerializer {
           custom_attributes:
             attributes && formatCustomAttributes(attributes, this.strings, key),
           requirements: this.getRequirements(key),
+          upgrades: undefined as any[] | undefined,
         };
       })
       .sort((a, b) => a.id - b.id);
@@ -492,23 +530,23 @@ class ItemsSerializer {
       .concat("Version");
   }
 
-  getName(key, level) {
+  getName(key: string, level: string) {
     const name = this.getString(key);
 
     return level ? `${name} (level ${level})` : name;
   }
 
-  getString(key, suffix = "") {
+  getString(key: string, suffix = "") {
     return this.strings[`DOTA_Tooltip_ability_${key}${suffix && `_${suffix}`}`];
   }
 
-  getDescription(description, attributes) {
+  getDescription(description: string, attributes: any[]) {
     return replaceAttributes(description, attributes)
       .split(/\\n/)
       .map(this.formatAttribute);
   }
 
-  formatAttribute(attribute) {
+  formatAttribute(attribute: string) {
     if (
       !attribute.includes("<h1>") ||
       !attribute.includes("</h1>") ||
@@ -520,6 +558,7 @@ class ItemsSerializer {
       };
     } else {
       const regExp = /<h1>\s*(.*)\s*:\s*(.*)\s*<\/h1>\s*([\s\S]*)/gi;
+      // @ts-ignore
       const [_, type, header, body] = regExp.exec(attribute);
 
       return {
@@ -530,7 +569,7 @@ class ItemsSerializer {
     }
   }
 
-  getNotes(key, attributes) {
+  getNotes(key: string, attributes: any[]) {
     const notes = [];
 
     for (let i = 0; this.getString(key, `Note${i}`); i++) {
@@ -542,7 +581,7 @@ class ItemsSerializer {
     return notes;
   }
 
-  getRequirements(key) {
+  getRequirements(key: string) {
     let k = key;
 
     if (!k.startsWith("item_recipe")) {
@@ -564,8 +603,8 @@ class ItemsSerializer {
     return requirements;
   }
 
-  getUpgrades(items, item) {
-    const upgrades = [];
+  getUpgrades(items: any[], item: any) {
+    const upgrades: any[] = [];
 
     items
       .filter((i) => !i.recipe)

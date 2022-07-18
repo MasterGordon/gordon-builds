@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "User" ALTER COLUMN "twitch" DROP NOT NULL,
+ALTER COLUMN "twitter" DROP NOT NULL;

@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Flex,
   Grid,
   Heading,
@@ -8,22 +9,28 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { GetStaticProps, NextPage } from "next";
+import { signIn, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
-import builds from "../../builds";
-import Header from "../../components/Header";
 import { LatestBuildsProps } from "../../components/LatestBuilds";
-import { getData } from "../../provider/dota";
+import { getSSG } from "../../server/ssg";
+import { trpc } from "../../utils/trpc";
 
-const Builds: NextPage<LatestBuildsProps> = (props) => {
-  const { builds } = props;
+const Builds: NextPage<LatestBuildsProps> = () => {
+  const { data: builds } = trpc.useQuery(["build.list"], {
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+  const { data: test } = trpc.useQuery(["auth-test"]);
+  const { data } = useSession();
+  // console.log(data);
   return (
     <>
       <Head>
         <title>Latest Builds - Gordon Builds</title>
         <meta name="description" content="Latest builds from Gordon Builds" />
       </Head>
-      <Header />
       <Box
         marginY="4"
         marginX="auto"
@@ -33,15 +40,16 @@ const Builds: NextPage<LatestBuildsProps> = (props) => {
         backgroundColor="gray.700"
       >
         <Heading size="lg" fontWeight="semibold" color="white" marginBottom="4">
-          Latest builds
+          Latest builds {test}
         </Heading>
+        <Button onClick={() => signIn()}>Login {data?.user?.name}</Button>
         <Flex alignItems="baseline">
           <Grid
             width="100%"
             gridTemplateColumns={{ md: "1fr 1fr", xl: "1fr 1fr 1fr" }}
             gap="4"
           >
-            {builds.map((build) => (
+            {(builds || []).map((build) => (
               <VStack
                 key={build.slug}
                 alignItems="start"
@@ -91,19 +99,12 @@ const Builds: NextPage<LatestBuildsProps> = (props) => {
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const heroes = await getData("heroes");
-  const buildsList = builds.map((build) => ({
-    name: build.name,
-    heroKey: build.heroKey,
-    version: build.version,
-    slug: build.slug,
-    shortDescription: build.shortDescription,
-    heroName: heroes.find((hero) => hero.key === build.heroKey).name,
-  }));
+  const ssg = await getSSG(context);
+  await ssg.fetchQuery("build.list");
 
   return {
     props: {
-      builds: buildsList,
+      trpcState: ssg.dehydrate(),
     },
   };
 };

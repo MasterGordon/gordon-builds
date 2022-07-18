@@ -1,5 +1,5 @@
 import { NextApiHandler } from "next";
-import { getData } from "../../provider/dota.js";
+import { getData } from "../../provider/dota";
 
 const getDotaData: NextApiHandler = async (req, res) => {
   const { type } = req.query;

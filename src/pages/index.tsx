@@ -2,13 +2,11 @@ import { Box, Center, Heading, Text } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import Background from "../images/midlane-background.png";
 import Image from "next/image";
-import Header from "../components/Header";
 import Head from "next/head";
 
 const Home: NextPage = () => {
   return (
     <>
-      <Header />
       <Head>
         <title>Most Fun Dota 2 Builds - Gordon Builds</title>
         <meta

@@ -1,4 +1,4 @@
-import { Link, VStack } from "@chakra-ui/react";
+import { chakra, Link, VStack } from "@chakra-ui/react";
 
 const Footer: React.FC = () => {
   return (
@@ -10,11 +10,11 @@ const Footer: React.FC = () => {
         </span>{" "}
         by <Link href="https://github.com/MasterGordon">MasterGordon</Link>
       </p>
-      <p>
+      <chakra.p textAlign="center">
         Dota 2 is a registered trademark of Valve Corporation. All game images
         and names are property of Valve Corporation. This app is not affiliated
         with Valve Corporation.
-      </p>
+      </chakra.p>
     </VStack>
   );
 };

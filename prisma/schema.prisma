@@ -1,0 +1,47 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id       String  @id @default(uuid())
+  name     String
+  password String
+  twitch   String?
+  twitter  String?
+  role     String
+}
+
+model BuildItem {
+  id                  String             @id @default(uuid())
+  key                 String
+  description         String?
+  BuildItemCategory   BuildItemCategory? @relation(fields: [buildItemCategoryId], references: [id])
+  buildItemCategoryId String?
+}
+
+model BuildItemCategory {
+  id        String      @id @default(uuid())
+  name      String
+  items     BuildItem[]
+  Build     Build?      @relation(fields: [buildSlug], references: [slug])
+  buildSlug String?
+}
+
+model Build {
+  name             String
+  slug             String              @id @unique
+  complexity       Int
+  trollLevel       Int
+  description      String
+  shortDescription String
+  version          String
+  heroKey          String
+  skills           String[]
+  talents          String[]
+  items            BuildItemCategory[]
+}

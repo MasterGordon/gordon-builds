@@ -1,7 +1,5 @@
 import { GetStaticProps, NextPage } from "next";
 import Layout from "../../components/Layout";
-import builds from "../../builds";
-import { getData } from "../../provider/dota";
 import { Build } from "../../builds/Build";
 import {
   Box,
@@ -12,7 +10,6 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { MDXRemoteSerializeResult } from "next-mdx-remote";
-import { serialize } from "next-mdx-remote/serialize";
 import BuildDescription from "../../components/build/BuildDescription";
 import BuildItems from "../../components/build/BuildItems";
 import BuildHeader from "../../components/build/BuildHeader";
@@ -22,6 +19,9 @@ import TalentTree from "../../components/build/TalentTree";
 import meepo from "../../images/meepo.png";
 import troll from "../../images/troll.png";
 import Image from "next/image";
+import { getSSG } from "../../server/ssg";
+import { z } from "zod";
+import { trpc } from "../../utils/trpc";
 
 interface Props extends Build {
   mdx: MDXRemoteSerializeResult;
@@ -31,29 +31,40 @@ interface Props extends Build {
   buildsList: any;
 }
 
-const Build: NextPage<Props> = (props) => {
+const Build: NextPage<Props> = ({ slug }) => {
+  const { data: buildList } = trpc.useQuery(["build.list"], {
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+  const { data: build } = trpc.useQuery(["build.getBySlug", { slug }], {
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+  if (!build) return null;
   return (
-    <Layout builds={props.buildsList}>
+    <Layout builds={buildList}>
       <Head>
-        <title>{props.name} - Gordon Builds</title>
+        <title>{build.name} - Gordon Builds</title>
         <meta
           name="description"
-          content={props.name + " - " + props.shortDescription}
+          content={build.name + " - " + build.shortDescription}
         />
       </Head>
       <VStack alignItems="start">
         <BuildHeader
-          heroKey={props.heroKey}
-          version={props.version}
-          name={props.name}
-          heroName={props.heroData.name}
+          heroKey={build.heroKey}
+          version={build.version}
+          name={build.name}
+          heroName={build.heroData.name}
         />
         <HStack>
           <Heading as="h2" size="md">
             Difficulty:{" "}
           </Heading>
-          <VisuallyHidden>{props.complexity}</VisuallyHidden>
-          {[...new Array(props.complexity)].map((_, index) => (
+          <VisuallyHidden>{build.complexity}</VisuallyHidden>
+          {[...new Array(build.complexity)].map((_, index) => (
             <Image key={index} src={meepo} alt="" />
           ))}
         </HStack>
@@ -61,15 +72,15 @@ const Build: NextPage<Props> = (props) => {
           <Heading as="h2" size="md">
             Troll Level:{" "}
           </Heading>
-          <VisuallyHidden>{props.trollLevel}</VisuallyHidden>
-          {[...new Array(props.trollLevel)].map((_, index) => (
+          <VisuallyHidden>{build.trollLevel}</VisuallyHidden>
+          {[...new Array(build.trollLevel)].map((_, index) => (
             <Image key={index} src={troll} alt="" />
           ))}
         </HStack>
         <Heading as="h2" size="md">
           Item Build
         </Heading>
-        <BuildItems items={props.items} itemData={props.itemData} />
+        <BuildItems items={build.items} itemData={build.itemData} />
         <Heading as="h2" size="md">
           Hero Skills
         </Heading>
@@ -79,17 +90,17 @@ const Build: NextPage<Props> = (props) => {
           width="100%"
         >
           <VStack alignItems="start">
-            {props.heroData.abilities
-              .slice(0, 6)
+            {build?.heroData.abilities
+              ?.slice(0, 6)
               .map((ability: string, index: number) => {
                 return ability != "generic_hidden" ? (
                   <HStack key={ability}>
                     <BuildAbility
                       ability={ability}
-                      abilityData={props.abilities[ability]}
+                      abilityData={build.abilities[ability]}
                     />
                     <HStack>
-                      {props.skills[index]
+                      {build.skills[index]
                         .split("")
                         .map((letter: string, index: number) => {
                           return (
@@ -118,12 +129,14 @@ const Build: NextPage<Props> = (props) => {
           Talents
         </Heading>
         <TalentTree
-          talents={props.talents}
-          talentNames={props.heroData.talents.map(
-            (talent: string) => props.abilities[talent].name
-          )}
+          talents={build.talents}
+          talentNames={
+            build?.heroData.talents?.map(
+              (talent: string) => build.abilities[talent].name
+            ) ?? []
+          }
         />
-        <BuildDescription mdx={props.mdx} />
+        <BuildDescription mdx={build.mdx} />
       </VStack>
     </Layout>
   );
@@ -135,56 +148,29 @@ export const getStaticProps: GetStaticProps = async (context) => {
       notFound: true,
     };
   }
-  const { slug } = context.params;
-  const build = builds.find((b) => b.slug === slug);
-
-  if (!build) return { notFound: true };
-  const heroes = await getData("heroes");
-  const heroData = heroes.find((hero) => hero.key === build.heroKey);
-  const abilities = (await getData("abilities"))
-    .filter(
-      (ability) =>
-        heroData.abilities.includes(ability.key) ||
-        heroData.talents.includes(ability.key)
-    )
-    .map((ability) => {
-      return JSON.parse(JSON.stringify(ability));
+  const { slug } = z
+    .object({
+      slug: z.string(),
     })
-    .reduce((acc, ability) => {
-      acc[ability.key] = ability;
-      return acc;
-    }, {});
-  if (!heroData) return { notFound: true };
-  const itemData = (await getData("items"))
-    .filter((item) =>
-      Object.values(build.items)
-        .flat()
-        .some((buildItem) => buildItem.key === item.key)
-    )
-    .map((item) => {
-      return JSON.parse(JSON.stringify(item));
-    })
-    .reduce((acc, item) => {
-      acc[item.key] = item;
-      return acc;
-    }, {});
-  const mdx = await serialize(build.description);
-  const buildsList = builds.map((build) => ({
-    name: build.name,
-    heroKey: build.heroKey,
-    version: build.version,
-    slug: build.slug,
-    heroName: heroes.find((hero) => hero.key === build.heroKey).name,
-  }));
+    .parse(context.params);
+  const ssg = await getSSG(context);
+  await ssg.fetchQuery("build.getBySlug", { slug });
+  await ssg.fetchQuery("build.list");
 
   return {
-    props: { ...build, mdx, heroData, abilities, itemData, buildsList },
+    props: {
+      trpcState: ssg.dehydrate(),
+      slug,
+    },
   };
 };
+
 export async function getStaticPaths() {
+  const ssg = await getSSG();
+  const slugs = await ssg.fetchQuery("build.slugs");
   return {
-    paths: builds.map((build) => ({
-      params: { slug: build.slug },
+    paths: slugs.map((slug) => ({
+      params: { slug },
     })),
     fallback: false,
   };
