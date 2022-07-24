@@ -1,9 +1,8 @@
 import { Build, BuildItem, BuildItemCategory } from "@prisma/client";
 import { kebabCase } from "case-anything";
 import create, { StoreApi } from "zustand";
+import { devtools } from "zustand/middleware";
 import createContext from "zustand/context";
-import { createConfig } from "../../pages/_app";
-import { trpc } from "../../utils/trpc";
 
 interface BuildItemCategoryState extends BuildItemCategory {
   items: BuildItem[];
@@ -16,12 +15,10 @@ interface EditorError {
 }
 
 export interface BuildEditorState {
-  build: Build;
+  build: Omit<Build, "id">;
   itemCategories: Set<BuildItemCategoryState>;
   errors: EditorError[];
 }
-
-const trpcClient = trpc.createClient(createConfig());
 
 export const emptyBuildEditorState: BuildEditorState = {
   build: {
@@ -34,7 +31,7 @@ export const emptyBuildEditorState: BuildEditorState = {
     trollLevel: 1,
     complexity: 1,
     talents: ["", ""],
-    skills: ["", "", "", "", "", ""],
+    skills: ["X   X", " X", "  X", " ", " ", " "],
   },
   itemCategories: new Set(),
   errors: [],
@@ -44,38 +41,37 @@ export interface EditorStore extends BuildEditorState {
   setName: (name: string) => void;
   setSlug: (slug: string) => void;
   setHeroKey: (heroKey: string) => void;
+  setVersion: (version: string) => void;
 }
 
 export const createBuildEditorStoreWithInitialState =
   (initialState: BuildEditorState) => () =>
-    create<EditorStore>((set) => ({
-      ...initialState,
-      loadBuild: async (slug: string) => {
-        const { items, ...build } = await trpcClient.query(
-          "build.getPlainBuild",
-          {
-            slug,
-          }
-        );
-        set((state) => ({ ...state, build, itemCategories: new Set(items) }));
-      },
-      setName: (name: string) => {
-        const slug = kebabCase(name);
-        set((state) => {
-          return { ...state, build: { ...state.build, name, slug } };
-        });
-      },
-      setSlug: (slug: string) => {
-        set((state) => {
-          return { ...state, build: { ...state.build, slug } };
-        });
-      },
-      setHeroKey: (heroKey: string) => {
-        set((state) => {
-          return { ...state, build: { ...state.build, heroKey } };
-        });
-      },
-    }));
+    create<EditorStore>()(
+      devtools((set) => ({
+        ...initialState,
+        setName: (name: string) => {
+          const slug = kebabCase(name);
+          set((state) => {
+            return { ...state, build: { ...state.build, name, slug } };
+          });
+        },
+        setSlug: (slug: string) => {
+          set((state) => {
+            return { ...state, build: { ...state.build, slug } };
+          });
+        },
+        setHeroKey: (heroKey: string) => {
+          set((state) => {
+            return { ...state, build: { ...state.build, heroKey } };
+          });
+        },
+        setVersion: (version: string) => {
+          set((state) => {
+            return { ...state, build: { ...state.build, version } };
+          });
+        },
+      }))
+    );
 
 const { Provider, useStore } = createContext<StoreApi<EditorStore>>();
 

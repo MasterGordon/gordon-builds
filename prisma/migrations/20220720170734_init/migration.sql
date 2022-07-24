@@ -1,4 +1,16 @@
 -- CreateTable
+CREATE TABLE "User" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "twitch" TEXT,
+    "twitter" TEXT,
+    "role" TEXT NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "BuildItem" (
     "id" TEXT NOT NULL,
     "key" TEXT NOT NULL,
@@ -19,6 +31,7 @@ CREATE TABLE "BuildItemCategory" (
 
 -- CreateTable
 CREATE TABLE "Build" (
+    "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
     "complexity" INTEGER NOT NULL,
@@ -30,7 +43,7 @@ CREATE TABLE "Build" (
     "skills" TEXT[],
     "talents" TEXT[],
 
-    CONSTRAINT "Build_pkey" PRIMARY KEY ("slug")
+    CONSTRAINT "Build_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex

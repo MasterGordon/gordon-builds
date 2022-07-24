@@ -10,11 +10,14 @@
     "db-migrate-dev": "yarn prisma migrate dev",
     "db-nuke": "docker-compose down --volumes --remove-orphans",
     "dev": "next dev",
-    "dx": "run-s db-up db-migrate-dev db-seed dev",
+    "dx": "run-s db-up format:prisma db-migrate-dev db-seed dev",
     "postbuild": "next-sitemap",
     "start": "next start -p 8069",
     "lint": "next lint",
-    "studio": "prisma studio"
+    "studio": "prisma studio",
+    "format": "run-p format:*",
+    "format:prettier": "prettier --write 'src/*.{js,jsx,ts,tsx}'",
+    "format:prisma": "prisma format"
   },
   "prisma": {
     "seed": "ts-node --esm ./prisma/seed.ts"
@@ -30,10 +33,12 @@
     "@trpc/next": "^9.25.3",
     "@trpc/react": "^9.25.3",
     "@trpc/server": "^9.25.3",
+    "@types/is-number": "^7.0.3",
     "axios": "^0.25.0",
     "case-anything": "^2.1.10",
     "framer-motion": "^5.6.0",
     "fs-extra": "^10.0.0",
+    "is-number": "^7.0.0",
     "next": "12.0.10",
     "next-mdx-remote": "^3.0.8",
     "node-fetch": "^3.2.0",

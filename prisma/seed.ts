@@ -3,6 +3,13 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const main = async () => {
+  try {
+    await prisma.user.delete({
+      where: {
+        name: "MasterGordon",
+      },
+    });
+  } catch (e) {}
   await prisma.user.create({
     data: {
       name: "MasterGordon",
@@ -10,18 +17,21 @@ const main = async () => {
       password: "admin",
     },
   });
-  await prisma.build.delete({
-    where: {
-      slug: "secret-carry-maiden",
-    },
-    include: {
-      items: {
-        include: {
-          items: true,
+
+  try {
+    await prisma.build.delete({
+      where: {
+        slug: "secret-carry-maiden",
+      },
+      include: {
+        items: {
+          include: {
+            items: true,
+          },
         },
       },
-    },
-  });
+    });
+  } catch (e) {}
   await prisma.build.create({
     data: {
       name: "Secret Carry Maiden",

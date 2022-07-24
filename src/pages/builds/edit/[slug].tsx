@@ -30,6 +30,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     .parse(context.params);
   const ssg = await getSSG(context);
   await ssg.fetchQuery("build.getPlainBuild", { slug });
+  await ssg.fetchQuery("dota.versions");
+  await ssg.fetchQuery("dota.heroes");
 
   return {
     props: {

@@ -76,6 +76,7 @@ const HeroPicker: React.FC = () => {
                 <IconButton
                   display={heroInput.length > 0 ? "inline-block" : "none"}
                   aria-label="Clear Hero Input"
+                  tabIndex={-1}
                   onClick={(e) => {
                     setHeroInput("");
                     ref.current?.focus();
@@ -112,6 +113,9 @@ const HeroPicker: React.FC = () => {
                   width="100%"
                   justifyContent="start"
                   borderRadius="0"
+                  _focus={{
+                    background: "var(--chakra-colors-whiteAlpha-300)",
+                  }}
                 >
                   <Img
                     src={`https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/${h.key.replace(

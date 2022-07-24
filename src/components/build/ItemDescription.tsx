@@ -129,7 +129,7 @@ const ItemDescription: React.FC<Props> = ({ description, item }) => {
                 >
                   Active: {description.header}
                   <Spacer />
-                  {item.mana_cost && (
+                  {typeof item.mana_cost !== "undefined" && (
                     <>
                       <chakra.span
                         boxSize="1.2em"
@@ -141,7 +141,7 @@ const ItemDescription: React.FC<Props> = ({ description, item }) => {
                       {item.mana_cost}
                     </>
                   )}
-                  {item.cooldown && (
+                  {typeof item.cooldown !== "undefined" && (
                     <>
                       <chakra.span
                         boxSize="1.2em"
