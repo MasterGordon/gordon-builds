@@ -134,7 +134,10 @@ const abilitySchema = z
     AbilityUnitDamageType: z.string().optional(),
     AbilitySound: z.string().optional(),
     AbilityValues: z
-      .record(z.string(), z.string().or(z.record(z.string(), z.string())))
+      .record(
+        z.string(),
+        z.string().or(z.record(z.string(), z.string())).or(z.null())
+      )
       .optional(),
     SpellImmunityType: z.string().optional(),
     AbilityCastPoint: z.string().optional(),
@@ -188,6 +191,7 @@ const abilitySchema = z
     UnlockMinEffectIndex: z.string().optional(),
     UnlockMaxEffectIndex: z.string().optional(),
     EventID: z.string().optional(),
+    base_class: z.string().optional(),
   })
   .strict();
 
@@ -196,9 +200,7 @@ type RawAbility = z.infer<typeof abilitySchema> & { key: string };
 export const getRawAbilities = async () => {
   const response = await fetch("abilities");
   const abilitiesRaw = response.DOTAAbilities;
-  const abilityBase = abilitySchema
-    .strip()
-    .parse(abilitiesRaw.dota_base_ability);
+  const abilityBase = abilitySchema.strip().parse(abilitiesRaw.ability_base);
 
   const abilitiesData = Object.entries(abilitiesRaw)
     .map(([key, value]) => {
@@ -208,6 +210,11 @@ export const getRawAbilities = async () => {
         key === "dota_base_ability"
       )
         return;
+      Object.entries(value as any).forEach(([key, v]) => {
+        if (key === "AbilityValues" && Array.isArray(v)) {
+          (value as any)[key] = undefined;
+        }
+      });
       const ability = abilitySchema.parse(value);
       Object.keys(ability).forEach((key) => {
         if (key.startsWith("Item")) {
