@@ -32,7 +32,7 @@ export const translator = {
   translate: (token: string): string | undefined => {
     if (!translations) throw new Error("Translations not loaded");
     const result = translations[token];
-    if (!result) console.warn(`Translation not found for ${token}`);
+    // if (!result) console.warn(`Translation not found for ${token}`);
     return result;
   },
 
