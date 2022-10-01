@@ -1,6 +1,8 @@
+import { pascalCase } from "case-anything";
 import { z } from "zod";
 import { dotaFetch } from "./dota-fetch";
 import { translator } from "./dota-translations";
+import { removeHtmlTags } from "./remove-html-tags";
 
 const abilitySchema = z
   .object({
@@ -245,6 +247,128 @@ const tryGetAsArray = (ability: RawAbility, key: keyof RawAbility) => {
   return res;
 };
 
+const targetTeamToPrefix = {
+  DOTA_UNIT_TARGET_TEAM_FRIENDLY: "Allied",
+  DOTA_UNIT_TARGET_TEAM_ENEMY: "Enemy",
+} as Record<string, string>;
+
+interface Header {
+  label: string;
+  value: string;
+  raw?: string;
+}
+
+type Headers = Header[];
+
+const getHeaders = (ability: RawAbility) => {
+  const headers: Headers = [];
+  if (ability.AbilityBehavior) {
+    const abilityTarget = {
+      label: translator.translate("DOTA_ToolTip_Ability"),
+      value: undefined,
+    } as Partial<Header>;
+    if (ability.AbilityBehavior.includes("DOTA_ABILITY_BEHAVIOR_POINT")) {
+      abilityTarget.value = translator.translate("DOTA_ToolTip_Ability_Point");
+    } else if (
+      ability.AbilityBehavior.includes("DOTA_ABILITY_BEHAVIOR_UNIT_TARGET")
+    ) {
+      abilityTarget.value = translator.translate("DOTA_ToolTip_Ability_Target");
+    } else if (
+      ability.AbilityBehavior.includes("DOTA_ABILITY_BEHAVIOR_NO_TARGET")
+    ) {
+      abilityTarget.value = translator.translate(
+        "DOTA_ToolTip_Ability_NoTarget"
+      );
+    }
+    if (ability.AbilityBehavior.includes("DOTA_ABILITY_BEHAVIOR_AUTOCAST")) {
+      abilityTarget.value = translator.translate(
+        "DOTA_ToolTip_Ability_AutoCast"
+      );
+    }
+    if (ability.AbilityBehavior.includes("DOTA_ABILITY_BEHAVIOR_PASSIVE")) {
+      abilityTarget.value = translator.translate(
+        "DOTA_ToolTip_Ability_Passive"
+      );
+    }
+    if (abilityTarget.value) headers.push(abilityTarget as Header);
+  }
+
+  if (ability.AbilityUnitTargetTeam) {
+    const team = targetTeamToPrefix[ability.AbilityUnitTargetTeam];
+    let type: string | undefined;
+    if (ability.AbilityUnitTargetType) {
+      const targetsRaw = ability.AbilityUnitTargetType.split(" | ");
+      const creeps = targetsRaw.includes("DOTA_UNIT_TARGET_BASIC");
+      const heroes = targetsRaw.includes("DOTA_UNIT_TARGET_HERO");
+      const target = creeps && heroes ? "Units" : creeps ? "Creeps" : "Heroes";
+      type = target;
+      type += targetsRaw.includes("DOTA_UNIT_TARGET_BUILDING")
+        ? "AndBuildings"
+        : "";
+    }
+    const value = translator.translate("DOTA_ToolTip_Targeting_" + team + type);
+    if (value)
+      headers.push({
+        label: translator.translate("DOTA_ToolTip_Targeting") || "Affects",
+        value: removeHtmlTags(value),
+      });
+  }
+
+  if (ability.AbilityUnitDamageType) {
+    const damageType = removeHtmlTags(
+      translator.translate(
+        "DOTA_ToolTip_Damage_" +
+          pascalCase(ability.AbilityUnitDamageType.split("_").at(-1) || "")
+      )
+    );
+    if (damageType)
+      headers.push({
+        label: translator.translate("DOTA_ToolTip_Damage") || "Damage",
+        value: damageType,
+        raw: ability.AbilityUnitDamageType,
+      });
+  }
+
+  if (ability.SpellImmunityType) {
+    const spellImmunityType = removeHtmlTags(
+      translator.translate(
+        "DOTA_ToolTip_PiercesSpellImmunity_" +
+          pascalCase(ability.SpellImmunityType.split("_").at(-1) || "")
+      )
+    );
+    if (spellImmunityType)
+      headers.push({
+        label:
+          translator.translate("DOTA_ToolTip_PiercesSpellImmunity") ||
+          "Pierces Spell Immunity",
+        value: spellImmunityType,
+        raw: ability.SpellImmunityType,
+      });
+  }
+
+  if (ability.SpellDispellableType) {
+    let value: string | undefined;
+    if (ability.SpellDispellableType === "SPELL_DISPELLABLE_YES") {
+      value = translator.translate("DOTA_ToolTip_Dispellable_Yes_Soft");
+    } else if (
+      ability.SpellDispellableType === "SPELL_DISPELLABLE_YES_STRONG"
+    ) {
+      value = translator.translate("DOTA_ToolTip_Dispellable_Yes_Strong");
+    } else if (ability.SpellDispellableType === "SPELL_DISPELLABLE_NO") {
+      value = translator.translate("DOTA_ToolTip_Dispellable_No");
+    }
+    if (value)
+      headers.push({
+        label:
+          translator.translate("DOTA_ToolTip_Dispellable") || "Dispellable",
+        value: removeHtmlTags(value),
+        raw: ability.SpellDispellableType,
+      });
+  }
+
+  return headers;
+};
+
 export const getAbilities = async () => {
   const rawAbilities = await getRawAbilities();
   await translator.prewarm();
@@ -260,6 +384,7 @@ export const getAbilities = async () => {
         cooldown: tryGetAsArray(ability, "AbilityCooldown"),
         manaCost: tryGetAsArray(ability, "AbilityManaCost"),
         customAttributes: await getCustomAttributes(ability),
+        header: getHeaders(ability),
       };
     })
   );
