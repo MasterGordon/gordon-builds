@@ -1,5 +1,7 @@
 import { dotaFetch } from "./dota-fetch";
 import { z } from "zod";
+import { translator } from "./dota-translations";
+import { getNotes } from "./abilities";
 
 const itemSchema = z
   .object({
@@ -86,7 +88,7 @@ const itemSchema = z
   })
   .strict();
 
-type ItemRaw = z.infer<typeof itemSchema>;
+export type ItemRaw = z.infer<typeof itemSchema>;
 
 export const getRawItems = async (): Promise<ItemRaw[]> => {
   const response = await dotaFetch("items");
@@ -97,4 +99,84 @@ export const getRawItems = async (): Promise<ItemRaw[]> => {
     }))
     .slice(1);
   return z.array(itemSchema).parse(itemsRaw);
+};
+
+const tooltipKindMapping = {
+  name: "",
+  lore: "_Lore",
+  description: "_Description",
+};
+
+const parseIfNumber = (value: string) => {
+  const parsed = Number(value);
+  return Number.isNaN(parsed) ? value : parsed;
+};
+
+const resolvePlaceholders = (text: string, abilityRaw: ItemRaw) => {
+  const { AbilitySpecial, AbilityValues } = abilityRaw;
+  const placeholders = text.replaceAll("%%%", "%").match(/%[^%]+%/g);
+  const values = {
+    ...AbilityValues,
+    ...AbilitySpecial?.reduce((acc, v: any) => ({ ...acc, ...v }), {}),
+  };
+  if (!placeholders) return text;
+  placeholders.forEach((placeholder) => {
+    const placeholderName = placeholder.slice(1, -1);
+    const placeholderValue = parseIfNumber(
+      values?.[placeholderName] < 0
+        ? -values?.[placeholderName]
+        : values?.[placeholderName]
+    );
+
+    if (placeholderValue) {
+      text = text.replace(placeholder, `<b>${placeholderValue}</b>`);
+    }
+  });
+  return text.replaceAll("%%", "%").replaceAll("<br>", "\n");
+};
+
+export const getTooltip = (
+  item: string,
+  kind: keyof typeof tooltipKindMapping | string,
+  abilityRaw: ItemRaw
+) => {
+  const translation = translator.translate(
+    `DOTA_Tooltip_${kind == "name" ? "A" : "a"}bility_${item}${
+      (tooltipKindMapping as any)[kind] ?? kind
+    }`
+  );
+  if (!translation) return;
+  return resolvePlaceholders(translation, abilityRaw);
+};
+
+export const getDescription = (item: ItemRaw) => {
+  const descriptionRaw = getTooltip(item.key, "description", item);
+  if (!descriptionRaw) return;
+  const description: any = [];
+  descriptionRaw.split("<h1>").forEach((section) => {
+    const [header, ...text] = section.split("</h1>");
+    const [kind] = header.split(":");
+    description.push({
+      kind: kind.toLowerCase().trim(),
+      header: header.trim(),
+      text: text.join("").trim(),
+    });
+  });
+  return description;
+};
+
+export const getItems = async () => {
+  const itemsRaw = await getRawItems();
+  await translator.prewarm();
+  return itemsRaw.map((item) => ({
+    key: item.key,
+    id: item.ID,
+    name: getTooltip(item.key, "name", item),
+    description: getDescription(item),
+    lore: getTooltip(item.key, "lore", item),
+    notes: getNotes(item.key, item),
+    cost: item.ItemCost,
+    cooldown: item.AbilityCooldown,
+    isNeutralDrop: item.ItemIsNeutralDrop == "1",
+  }));
 };

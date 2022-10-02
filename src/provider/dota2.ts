@@ -2,7 +2,7 @@ import { translator } from "./dota-translations";
 import isNumber from "is-number";
 import { getAbilities } from "./abilities";
 import { dotaFetch } from "./dota-fetch";
-import { getRawItems } from "./items";
+import { getItems, getRawItems } from "./items";
 
 const parseNumber = (value: string | undefined) => {
   if (value && isNumber(value)) {
@@ -104,6 +104,7 @@ const main = async () => {
   //     const ability = abilities.find((ability) => ability.key === value);
   //     console.log(ability);
   //   });
-  const items = await getRawItems();
+  const items = await getItems();
+  console.log(items.find((item) => item.key === "item_desolator"));
 };
 main();

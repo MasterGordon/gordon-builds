@@ -2,6 +2,7 @@ import { pascalCase } from "case-anything";
 import { z } from "zod";
 import { dotaFetch } from "./dota-fetch";
 import { translator } from "./dota-translations";
+import { ItemRaw } from "./items";
 import { removeHtmlTags } from "./remove-html-tags";
 
 const abilitySchema = z
@@ -194,7 +195,7 @@ const getCustomAttributes = async (ability: RawAbility) => {
 const resolvePlaceholders = (text: string, abilityRaw: RawAbility) => {
   const { AbilitySpecial } = abilityRaw;
   if (!hasAbilitySpecial(AbilitySpecial)) return text;
-  const placeholders = text.match(/%[^%]+%/g);
+  const placeholders = text.replaceAll("%%%", "%").match(/%[^%]+%/g);
   if (!placeholders) return text;
   placeholders.forEach((placeholder) => {
     const placeholderName = placeholder.slice(1, -1);
@@ -206,13 +207,13 @@ const resolvePlaceholders = (text: string, abilityRaw: RawAbility) => {
       text = text.replace(placeholder, `<b>${placeholderValue}</b>`);
     }
   });
-  return text;
+  return text.replaceAll("%%", "%");
 };
 
-const getTooltip = (
+export const getTooltip = (
   ability: string,
   kind: keyof typeof tooltipKindMapping | string,
-  abilityRaw: RawAbility
+  abilityRaw: RawAbility | ItemRaw
 ) => {
   const translation = translator.translate(
     "DOTA_Tooltip_ability_" +
@@ -223,7 +224,19 @@ const getTooltip = (
   return resolvePlaceholders(translation, abilityRaw);
 };
 
-const getNotes = (ability: string, abilityRaw: RawAbility) => {
+export const getItemTooltip = (
+  item: string,
+  kind: keyof typeof tooltipKindMapping | string,
+  abilityRaw: ItemRaw
+) => {
+  const translation = translator.translate(
+    "DOTA_Tooltip_Ability_" + item + ((tooltipKindMapping as any)[kind] ?? kind)
+  );
+  if (!translation) return;
+  return resolvePlaceholders(translation, abilityRaw);
+};
+
+export const getNotes = (ability: string, abilityRaw: RawAbility) => {
   const notes = [];
   let i = 0;
   while (true) {
