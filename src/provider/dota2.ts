@@ -1,8 +1,8 @@
 import { translator } from "./dota-translations";
 import isNumber from "is-number";
-import { z } from "zod";
 import { getAbilities } from "./abilities";
 import { dotaFetch } from "./dota-fetch";
+import { getRawItems } from "./items";
 
 const parseNumber = (value: string | undefined) => {
   if (value && isNumber(value)) {
@@ -93,18 +93,17 @@ const getHeroes = async () => {
   return heroData;
 };
 
-const numberOrNumberArray = z.array(z.number()).or(z.number()).optional();
-
 const main = async () => {
   const heroes = await getHeroes();
   const weaver = heroes.find((hero) => hero.key === "npc_dota_hero_weaver");
   const abilities = await getAbilities();
-  console.log(weaver);
-  if (weaver)
-    Object.entries(weaver?.abilities).forEach(([key, value]) => {
-      console.log(key, value);
-      const ability = abilities.find((ability) => ability.key === value);
-      console.log(ability);
-    });
+  // console.log(weaver);
+  // if (weaver)
+  //   Object.entries(weaver?.abilities).forEach(([key, value]) => {
+  //     console.log(key, value);
+  //     const ability = abilities.find((ability) => ability.key === value);
+  //     console.log(ability);
+  //   });
+  const items = await getRawItems();
 };
 main();
