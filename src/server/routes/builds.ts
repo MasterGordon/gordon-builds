@@ -3,6 +3,7 @@ import { createRouter } from "../createRouter";
 import builds from "../../builds";
 import { z } from "zod";
 import { serialize } from "next-mdx-remote/serialize";
+import { getHeroes } from "../../provider/dota2";
 
 export const buildsRouter = createRouter()
   .query("list", {
@@ -40,13 +41,15 @@ export const buildsRouter = createRouter()
       const build = builds.find((b) => b.slug === slug);
 
       if (!build) throw new Error("Build not found");
-      const heroes = await getData("heroes");
+      const heroes = await getHeroes();
       const heroData = heroes.find((hero) => hero.key === build.heroKey);
       const abilities = (await getData("abilities"))
         .filter(
           (ability) =>
-            heroData?.abilities?.includes(ability.key) ||
-            heroData?.talents?.includes(ability.key)
+            (heroData?.abilities &&
+              Object.values(heroData.abilities).includes(ability.key)) ||
+            (heroData?.talents &&
+              Object.values(heroData.talents).includes(ability.key))
         )
         .map((ability) => {
           return JSON.parse(JSON.stringify(ability));

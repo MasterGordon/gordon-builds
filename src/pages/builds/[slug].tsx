@@ -57,7 +57,7 @@ const Build: NextPage<Props> = ({ slug }) => {
           heroKey={build.heroKey}
           version={build.version}
           name={build.name}
-          heroName={build.heroData.name}
+          heroName={build.heroData.name || "???"}
         />
         <HStack>
           <Heading as="h2" size="md">
@@ -90,7 +90,7 @@ const Build: NextPage<Props> = ({ slug }) => {
           width="100%"
         >
           <VStack alignItems="start">
-            {build?.heroData.abilities
+            {Object.values(build?.heroData.abilities)
               ?.slice(0, 6)
               .map((ability: string, index: number) => {
                 return ability != "generic_hidden" ? (
@@ -131,7 +131,7 @@ const Build: NextPage<Props> = ({ slug }) => {
         <TalentTree
           talents={build.talents}
           talentNames={
-            build?.heroData.talents?.map(
+            Object.values(build?.heroData.talents)?.map(
               (talent: string) => build.abilities[talent].name
             ) ?? []
           }

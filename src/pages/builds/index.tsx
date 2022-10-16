@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Flex,
   Grid,
   Heading,
@@ -9,7 +8,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { GetStaticProps, NextPage } from "next";
-import { signIn, useSession } from "next-auth/react";
+// import { signIn, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { LatestBuildsProps } from "../../components/LatestBuilds";
@@ -22,9 +21,6 @@ const Builds: NextPage<LatestBuildsProps> = () => {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
-  const { data: test } = trpc.useQuery(["auth-test"]);
-  const { data } = useSession();
-  // console.log(data);
   return (
     <>
       <Head>
@@ -40,9 +36,9 @@ const Builds: NextPage<LatestBuildsProps> = () => {
         backgroundColor="gray.700"
       >
         <Heading size="lg" fontWeight="semibold" color="white" marginBottom="4">
-          Latest builds {test}
+          Latest builds
         </Heading>
-        <Button onClick={() => signIn()}>Login {data?.user?.name}</Button>
+        {/* <Button onClick={() => signIn()}>Login {data?.user?.name}</Button> */}
         <Flex alignItems="baseline">
           <Grid
             width="100%"

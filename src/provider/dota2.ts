@@ -1,8 +1,6 @@
 import { translator } from "./dota-translations";
 import isNumber from "is-number";
-import { getAbilities } from "./abilities";
 import { dotaFetch } from "./dota-fetch";
-import { getItems, getRawItems } from "./items";
 
 const parseNumber = (value: string | undefined) => {
   if (value && isNumber(value)) {
@@ -11,7 +9,7 @@ const parseNumber = (value: string | undefined) => {
   return undefined;
 };
 
-const getHeroes = async () => {
+export const getHeroes = async () => {
   const response = await dotaFetch("heroes");
   await translator.prewarm();
   const heroBaseRaw = response.DOTAHeroes.npc_dota_hero_base as Record<
@@ -81,7 +79,7 @@ const getHeroes = async () => {
       },
       enabled: hero.Enabled === "1",
       key: hero.key,
-      name: translator.translate(hero.key),
+      name: translator.translate(hero.key + ":n"),
       role: hero.Role,
       nameAlias: hero.NameAliases,
       heroOrderId: parseNumber(hero.HeroOrderID),
@@ -93,18 +91,18 @@ const getHeroes = async () => {
   return heroData;
 };
 
-const main = async () => {
-  const heroes = await getHeroes();
-  const weaver = heroes.find((hero) => hero.key === "npc_dota_hero_weaver");
-  const abilities = await getAbilities();
-  // console.log(weaver);
-  // if (weaver)
-  //   Object.entries(weaver?.abilities).forEach(([key, value]) => {
-  //     console.log(key, value);
-  //     const ability = abilities.find((ability) => ability.key === value);
-  //     console.log(ability);
-  //   });
-  const items = await getItems();
-  console.log(items.find((item) => item.key === "item_desolator"));
-};
-main();
+// const main = async () => {
+//   const heroes = await getHeroes();
+//   const weaver = heroes.find((hero) => hero.key === "npc_dota_hero_weaver");
+//   const abilities = await getAbilities();
+//   // console.log(weaver);
+//   // if (weaver)
+//   //   Object.entries(weaver?.abilities).forEach(([key, value]) => {
+//   //     console.log(key, value);
+//   //     const ability = abilities.find((ability) => ability.key === value);
+//   //     console.log(ability);
+//   //   });
+//   const items = await getItems();
+//   console.log(items.find((item) => item.key === "item_desolator"));
+// };
+// main();

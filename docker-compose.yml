@@ -1,7 +1,7 @@
 version: '3.6'
 services:
   postgres:
-    image: postgres:13
+    image: postgres:latest
     ports:
       - '5812:5432' # expose pg on port 5832 to not collide with pg from elswhere
     restart: always
