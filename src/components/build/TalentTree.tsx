@@ -1,12 +1,4 @@
-import {
-  Box,
-  Center,
-  Flex,
-  Grid,
-  Heading,
-  HStack,
-  VStack,
-} from "@chakra-ui/react";
+import { Center, Flex, Grid, Heading, VStack } from "@chakra-ui/react";
 
 interface Props {
   talents: [string, string];

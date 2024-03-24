@@ -1,5 +1,4 @@
 import {
-  Button,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -17,9 +16,9 @@ import {
 } from "@chakra-ui/react";
 import { MdMenu } from "react-icons/md";
 import NextLink from "next/link";
-import { useRef } from "react";
+import { PropsWithChildren, useRef } from "react";
 
-interface HeaderLinkProps {
+interface HeaderLinkProps extends PropsWithChildren {
   href: string;
 }
 
@@ -40,7 +39,7 @@ const HeaderLink: React.FC<HeaderLinkProps> = ({ href, children }) => {
   );
 };
 
-const HeaderNavigation: React.FC = ({ children }) => {
+const HeaderNavigation: React.FC<PropsWithChildren> = ({ children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef<HTMLButtonElement>(null);
 

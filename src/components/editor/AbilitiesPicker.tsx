@@ -1,4 +1,4 @@
-import { Box, Center, Grid, HStack, VStack } from "@chakra-ui/react";
+import { Center, HStack, VStack } from "@chakra-ui/react";
 import { useMemo } from "react";
 import { trpc } from "../../utils/trpc";
 import BuildAbility from "../build/BuildAbility";

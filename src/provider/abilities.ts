@@ -7,7 +7,6 @@ import { removeHtmlTags } from "./remove-html-tags";
 
 const abilitySchema = z
   .object({
-    ID: z.string(),
     AbilityType: z.string().optional(),
     AbilitySpecial: z
       .array(z.record(z.string(), z.any()))
@@ -195,7 +194,7 @@ const getCustomAttributes = async (ability: RawAbility) => {
 const resolvePlaceholders = (text: string, abilityRaw: RawAbility) => {
   const { AbilitySpecial } = abilityRaw;
   if (!hasAbilitySpecial(AbilitySpecial)) return text;
-  const placeholders = text.replaceAll("%%%", "%").match(/%[^%]+%/g);
+  const placeholders = text.replace(/%%%/g, "%").match(/%[^%]+%/g);
   if (!placeholders) return text;
   placeholders.forEach((placeholder) => {
     const placeholderName = placeholder.slice(1, -1);
@@ -207,7 +206,7 @@ const resolvePlaceholders = (text: string, abilityRaw: RawAbility) => {
       text = text.replace(placeholder, `<b>${placeholderValue}</b>`);
     }
   });
-  return text.replaceAll("%%", "%");
+  return text.replace(/%%/g, "%");
 };
 
 export const getTooltip = (
@@ -389,7 +388,7 @@ export const getAbilities = async () => {
     rawAbilities.map(async (ability) => {
       return {
         key: ability.key,
-        id: ability.ID,
+        // id: ability.ID,
         name: getTooltip(ability.key, "name", ability),
         description: getTooltip(ability.key, "description", ability),
         lore: getTooltip(ability.key, "lore", ability),

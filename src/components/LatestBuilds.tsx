@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, HStack, Img, VStack } from "@chakra-ui/react";
+import { Flex, Heading, HStack, Img, VStack } from "@chakra-ui/react";
 import Link from "next/link";
 
 export interface LatestBuildsProps {
