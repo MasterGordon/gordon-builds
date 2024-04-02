@@ -1,7 +1,7 @@
 import { Box, Center, Heading, Text } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import Background from "../images/midlane-background.png";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import Head from "next/head";
 
 const Home: NextPage = () => {

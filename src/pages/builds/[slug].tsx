@@ -18,7 +18,7 @@ import BuildAbility from "../../components/build/BuildAbility";
 import TalentTree from "../../components/build/TalentTree";
 import meepo from "../../images/meepo.png";
 import troll from "../../images/troll.png";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { getSSG } from "../../server/ssg";
 import { z } from "zod";
 import { trpc } from "../../utils/trpc";

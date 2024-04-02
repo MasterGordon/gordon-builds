@@ -2,13 +2,12 @@ import type { AppProps } from "next/app";
 import { ChakraProvider } from "@chakra-ui/react";
 import theme from "../theme";
 import Footer from "../components/Footer";
-import { withTRPC } from "@trpc/next";
-import { AppRouter } from "../server/routes/_app";
 import { loggerLink } from "@trpc/client/links/loggerLink";
 import { httpBatchLink } from "@trpc/client/links/httpBatchLink";
 import superjson from "superjson";
 import { SessionProvider } from "next-auth/react";
 import Header from "../components/Header";
+import { trpc } from "../utils/trpc";
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   const { session } = pageProps;
@@ -23,7 +22,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   );
 };
 
-const getBaseUrl = () => {
+export const getBaseUrl = () => {
   if (typeof window !== "undefined") {
     return "";
   }
@@ -49,7 +48,4 @@ export const createConfig = () => ({
   transformer: superjson,
 });
 
-export default withTRPC<AppRouter>({
-  config: createConfig,
-  ssr: false,
-})(MyApp);
+export default trpc.withTRPC(MyApp);

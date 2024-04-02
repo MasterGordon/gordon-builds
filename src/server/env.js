@@ -10,6 +10,7 @@ const { z } = require("zod");
 const envSchema = z.object({
   DATABASE_URL: z.string().url(),
   NODE_ENV: z.enum(["development", "test", "production"]),
+  STEAM_SECRET: z.string().optional(),
 });
 
 const env = envSchema.safeParse(process.env);

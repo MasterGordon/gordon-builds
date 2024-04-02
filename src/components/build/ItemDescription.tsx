@@ -9,7 +9,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { Item } from "../../provider/ItemData";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import gold from "../../images/gold.png";
 import cooldown from "../../images/cooldown.png";
 

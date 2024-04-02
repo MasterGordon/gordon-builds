@@ -7,7 +7,7 @@ import {
   HStack,
   VStack,
 } from "@chakra-ui/react";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import cooldown from "../../images/cooldown.png";
 import { Ability } from "../../provider/AbilityData";
 import { formatArray } from "../../utils/formatArray";

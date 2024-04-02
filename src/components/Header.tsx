@@ -1,4 +1,5 @@
 import {
+  Button,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -17,25 +18,29 @@ import {
 import { MdMenu } from "react-icons/md";
 import NextLink from "next/link";
 import { PropsWithChildren, useRef } from "react";
+import { signIn, useSession } from "next-auth/react";
 
 interface HeaderLinkProps extends PropsWithChildren {
   href: string;
 }
 
+const NextChakraLink: React.FC<{ href: string }> = (props) => {
+  return <Link as={NextLink} {...props} />;
+};
+
 const HeaderLink: React.FC<HeaderLinkProps> = ({ href, children }) => {
   return (
-    <NextLink href={href} passHref>
-      <Heading
-        padding="6"
-        size="md"
-        as={Link}
-        _hover={{
-          backgroundColor: { md: "red.800" },
-        }}
-      >
-        {children}
-      </Heading>
-    </NextLink>
+    <Heading
+      href={href}
+      padding="6"
+      size="md"
+      as={NextChakraLink}
+      _hover={{
+        backgroundColor: { md: "red.800" },
+      }}
+    >
+      {children}
+    </Heading>
   );
 };
 
@@ -76,6 +81,9 @@ const HeaderNavigation: React.FC<PropsWithChildren> = ({ children }) => {
 };
 
 const Header: React.FC = () => {
+  const { data } = useSession();
+  console.log(data);
+
   return (
     <Flex backgroundColor="red.900" zIndex="50" position="relative">
       <Heading padding="4" as="h1" color="gray.50">
@@ -86,6 +94,7 @@ const Header: React.FC = () => {
         <HeaderLink href="/">Home</HeaderLink>
         <HeaderLink href="/builds">Builds</HeaderLink>
         <HeaderLink href="/builds/random">Random Build</HeaderLink>
+        <Button onClick={() => signIn()}>Sign in</Button>
       </HeaderNavigation>
     </Flex>
   );
