@@ -33,3 +33,19 @@ export const gameVersions = constants.gameVersions as StripTypenameDeep<
 >;
 
 export const abilities = constants.abilities!;
+
+export const TargetTeam = {
+  NONE: 0,
+  ALLY: 1,
+  ENEMY: 2,
+  BOTH: 3,
+} as const;
+
+export const TargetType = {
+  NONE: 0,
+  UNIT: 1,
+  POINT: 2,
+  TREE: 3,
+  BUILDING: 4,
+  CUSTOM: 5,
+} as const;

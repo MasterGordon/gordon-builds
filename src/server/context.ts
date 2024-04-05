@@ -18,7 +18,6 @@ export const createContext = async ({
   res,
 }: trpcNext.CreateNextContextOptions) => {
   const session = req ? await getSession({ req }) : undefined;
-  console.log("createContext for", session?.user?.name ?? "unknown user");
   return {
     req,
     res,

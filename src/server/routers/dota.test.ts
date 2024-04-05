@@ -18,4 +18,15 @@ describe("dota TRPC router", () => {
     const heroes = await router.dota.getHeroes();
     expect(heroes).toBeDefined();
   });
+
+  it("should all heroes work", async () => {
+    const router = getTestRouter();
+    const heroes = await router.dota.getHeroes();
+    for (const hero of heroes) {
+      const heroById = await router.dota.getHero({ id: hero.id });
+      expect(heroById).toBeDefined();
+      const heroByName = await router.dota.getHero({ name: hero.name });
+      expect(heroByName).toBeDefined();
+    }
+  });
 });

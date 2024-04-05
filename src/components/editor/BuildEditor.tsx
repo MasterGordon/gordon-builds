@@ -1,4 +1,4 @@
-import { Grid, HStack, VStack } from "@chakra-ui/react";
+import { Grid, VStack } from "@chakra-ui/react";
 import { useMemo } from "react";
 import AbilitiesPicker from "./AbilitiesPicker";
 import {
@@ -14,15 +14,15 @@ import VersionPicker from "./VersionPicker";
 const BuildEditor: React.FC<{ initialValue?: BuildEditorState }> = ({
   initialValue,
 }) => {
-  const createBuildEditorStore = useMemo(
+  const buildEditorStore = useMemo(
     () =>
       createBuildEditorStoreWithInitialState(
         initialValue || emptyBuildEditorState
-      ),
+      )(),
     [initialValue]
   );
   return (
-    <BuildEditorProvider createStore={createBuildEditorStore}>
+    <BuildEditorProvider store={buildEditorStore}>
       <VStack spacing="4" alignItems="start">
         <Grid gap="4" width="100%" templateColumns="1fr 2fr">
           <HeroPicker />

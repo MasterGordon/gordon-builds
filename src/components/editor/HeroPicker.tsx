@@ -5,7 +5,6 @@ import {
   HStack,
   Icon,
   IconButton,
-  Img,
   Input,
   InputGroup,
   InputRightElement,
@@ -22,6 +21,7 @@ import { useMemo, useRef, useState } from "react";
 import { MdClose } from "react-icons/md";
 import { trpc } from "../../utils/trpc";
 import { useBuildEditorStore } from "./buildEditorStore";
+import HeroIcon from "../HeroIcon";
 
 function fuzzyMatch(pattern: string, str: string) {
   str = str.toLowerCase();
@@ -32,11 +32,11 @@ function fuzzyMatch(pattern: string, str: string) {
 }
 
 const HeroPicker: React.FC = () => {
-  const { data: heroes } = trpc.useQuery(["dota.heroes"]);
+  const { data: heroes } = trpc.dota.getHeroes.useQuery({ slim: true });
   const heroKey = useBuildEditorStore((store) => store.build.heroKey);
   const setHeroKey = useBuildEditorStore((store) => store.setHeroKey);
   const hero = useMemo(
-    () => heroes?.find((h) => h.key === heroKey),
+    () => heroes?.find((h) => h.name === heroKey),
     [heroes, heroKey]
   );
   const [heroInput, setHeroInput] = useState("");
@@ -46,17 +46,13 @@ const HeroPicker: React.FC = () => {
     <Popover initialFocusRef={ref}>
       <PopoverTrigger>
         <Button as={HStack} height="auto" variant="ghost" padding="0">
-          <Img
-            src={`https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/${heroKey.replace(
-              "npc_dota_hero_",
-              ""
-            )}.png`}
-            alt={heroKey}
-            height="4em"
-            width={(16 / 9) * 4 + "em"}
+          <HeroIcon
+            heroName={hero?.name}
+            alt={hero?.displayName}
+            size="lg"
             mr={4}
           />
-          {hero?.name}
+          {hero?.displayName || "Select Hero"}
         </Button>
       </PopoverTrigger>
       <PopoverContent background="gray.900">
@@ -65,7 +61,7 @@ const HeroPicker: React.FC = () => {
         <PopoverHeader>Hero Picker</PopoverHeader>
         <PopoverBody>
           <FormControl marginBottom="4">
-            <FormLabel>Hero</FormLabel>
+            <FormLabel display="none">Hero</FormLabel>
             <InputGroup size="md">
               <Input
                 value={heroInput}
@@ -79,6 +75,7 @@ const HeroPicker: React.FC = () => {
                   tabIndex={-1}
                   onClick={(e) => {
                     setHeroInput("");
+                    setHeroKey("");
                     ref.current?.focus();
                     e.preventDefault();
                     e.stopPropagation();
@@ -99,13 +96,13 @@ const HeroPicker: React.FC = () => {
             overflowY="auto"
           >
             {heroes
-              ?.filter((h) => fuzzyMatch(heroInput, h.name))
+              ?.filter((h) => fuzzyMatch(heroInput, h.displayName))
               .map((h) => (
                 <Button
-                  key={h.key}
+                  key={h.name}
                   onClick={() => {
-                    setHeroInput(h.name);
-                    setHeroKey(h.key);
+                    setHeroInput(h.displayName);
+                    setHeroKey(h.name);
                   }}
                   variant="ghost"
                   height="auto"
@@ -117,17 +114,13 @@ const HeroPicker: React.FC = () => {
                     background: "var(--chakra-colors-whiteAlpha-300)",
                   }}
                 >
-                  <Img
-                    src={`https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/${h.key.replace(
-                      "npc_dota_hero_",
-                      ""
-                    )}.png`}
-                    alt={h.key}
-                    height="3em"
-                    width={(16 / 9) * 3 + "em"}
+                  <HeroIcon
+                    heroName={h.name}
+                    alt={h.displayName}
+                    size="md"
                     mr={4}
                   />
-                  {h.name}
+                  {h.displayName}
                 </Button>
               ))}
           </VStack>

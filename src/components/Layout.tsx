@@ -1,8 +1,12 @@
 import { Grid } from "@chakra-ui/react";
 import Content from "./Content";
 import LatestBuilds from "./LatestBuilds";
+import { PropsWithChildren } from "react";
 
-const Layout: React.FC<{ builds?: any }> = ({ builds, children }) => {
+const Layout: React.FC<PropsWithChildren<{ builds?: any }>> = ({
+  builds,
+  children,
+}) => {
   return (
     <>
       <Grid

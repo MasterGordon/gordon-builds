@@ -10,13 +10,13 @@ import {
   Tooltip,
   useDisclosure,
 } from "@chakra-ui/react";
-import { Ability } from "../../provider/AbilityData";
 import { isTouchDevice } from "../../utils/isTouch";
 import AbilityDescription from "./AbilityDescription";
+import { Ability } from "../../server/routers/dota";
 
 interface Props {
   ability: string;
-  abilityData: Ability;
+  abilityData: Ability["ability"];
 }
 
 const BuildAbility: React.FC<Props> = (props) => {

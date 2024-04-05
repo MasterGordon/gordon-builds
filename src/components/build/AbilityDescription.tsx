@@ -9,30 +9,30 @@ import {
 } from "@chakra-ui/react";
 import Image from "next/legacy/image";
 import cooldown from "../../images/cooldown.png";
-import { Ability } from "../../provider/AbilityData";
 import { formatArray } from "../../utils/formatArray";
+import { Ability } from "../../server/routers/dota";
+import { TargetTeam } from "../../provider/dota";
 
 interface Props {
-  ability: Ability;
+  ability: Ability["ability"];
 }
 
-const getAffects = (ability: Ability) => {
-  if (!ability.unit_targets) {
-    if (ability.team_target == "enemy") return "Enemies";
-    else return "Allies";
-  } else {
-    if (ability.team_target == "both") {
-      if (ability.unit_targets.length == 1 && ability.unit_targets[0] == "hero")
-        return "Heroes";
-      else return "Units";
-    }
-    const prefix = ability.team_target == "enemy" ? "Enemy" : "Allied";
-    if (ability.unit_targets.length == 1 && ability.unit_targets[0] == "hero")
-      return `${prefix} Heroes`;
-    else if (ability.unit_targets.length == 3)
-      return `${prefix} Units and Buildings`;
-    else return `${prefix} Units`;
-  }
+const getAffects = (ability: Ability["ability"]) => {
+  const team = ability.stat.unitTargetTeam;
+  const type = ability.stat.unitTargetType;
+  if (!team && !type) return undefined;
+  if (team == 4 && type == 128) return undefined;
+  let prefix = "";
+  if (team == TargetTeam.ENEMY) prefix = !type ? "Enemies" : "Enemy";
+  else if (team == TargetTeam.ALLY) prefix = !type ? "Allies" : "Allied";
+
+  if (type == 64 || type == 192) return "Trees";
+  if (type == 83) return "Trees and " + prefix + " Units";
+  if (type == 4) return team == TargetTeam.ALLY ? "Allies" : "Enemies";
+  if (type == 1) return prefix + " Heroes";
+  if (type == 19) return prefix + " Units";
+  if (type == 23) return prefix + " Units and Buildings";
+  return "Units";
 };
 
 const damageType = {
@@ -69,6 +69,7 @@ const KV: React.FC<KVProps> = (props) => {
 };
 
 const AbilityDescription: React.FC<Props> = ({ ability }) => {
+  const affects = getAffects(ability);
   return (
     <Box>
       <Heading
@@ -87,9 +88,7 @@ const AbilityDescription: React.FC<Props> = ({ ability }) => {
         borderBottomRadius="sm"
       >
         <KV label="Ability:" value={ability.kind} />
-        {ability.team_target && (
-          <KV label="Affects:" value={getAffects(ability)} />
-        )}
+        {affects && <KV label="Affects:" value={affects} />}
         {ability.damage_type && (
           <KV label="Damage Type:" {...damageType[ability.damage_type]} />
         )}

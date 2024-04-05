@@ -1,7 +1,8 @@
 import { Flex, Heading, HStack, Img, VStack } from "@chakra-ui/react";
 import Link from "next/link";
+import { PropsWithChildren } from "react";
 
-export interface LatestBuildsProps {
+export interface LatestBuildsProps extends PropsWithChildren {
   builds: {
     name: string;
     heroKey: string;
