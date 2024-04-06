@@ -12,6 +12,7 @@ import cooldown from "../../images/cooldown.png";
 import { formatArray } from "../../utils/formatArray";
 import { Ability } from "../../server/routers/dota";
 import { TargetTeam } from "../../provider/dota";
+import constants from "../../__generated__/data/constants.json";
 
 interface Props {
   ability: Ability["ability"];
@@ -36,15 +37,15 @@ const getAffects = (ability: Ability["ability"]) => {
 };
 
 const damageType = {
-  physical: {
+  [1]: {
     value: "Physical",
     color: "dmgPhysical",
   },
-  magical: {
+  [2]: {
     value: "Magical",
     color: "dmgMagical",
   },
-  pure: {
+  [4]: {
     value: "Pure",
     color: "dmgPure",
   },
@@ -68,6 +69,17 @@ const KV: React.FC<KVProps> = (props) => {
   );
 };
 
+// FIXME: ONLY FOR DEBUG
+global.c = constants;
+
+const kindByBehavior = (behavior: number) =>
+  ({
+    [2]: "Passive",
+    [40]: "Unit Target",
+    [2052]: "No Target",
+    [2056]: "Unit Target",
+  }[behavior] || "Point Target");
+
 const AbilityDescription: React.FC<Props> = ({ ability }) => {
   const affects = getAffects(ability);
   return (
@@ -79,7 +91,7 @@ const AbilityDescription: React.FC<Props> = ({ ability }) => {
         padding="3"
         borderTopRadius="sm"
       >
-        {ability.name}
+        {ability.language.displayName}
       </Heading>
       <VStack
         backgroundColor="gray.800"
@@ -87,10 +99,13 @@ const AbilityDescription: React.FC<Props> = ({ ability }) => {
         padding="3"
         borderBottomRadius="sm"
       >
-        <KV label="Ability:" value={ability.kind} />
+        <KV label="Ability:" value={kindByBehavior(ability.stat.behavior)} />
         {affects && <KV label="Affects:" value={affects} />}
-        {ability.damage_type && (
-          <KV label="Damage Type:" {...damageType[ability.damage_type]} />
+        {ability.stat.unitDamageType && (
+          <KV
+            label="Damage Type:"
+            {...damageType[ability.stat.unitDamageType as 1 | 2 | 4]}
+          />
         )}
         {typeof ability.pierces_spell_immunity !== "undefined" && (
           <KV
