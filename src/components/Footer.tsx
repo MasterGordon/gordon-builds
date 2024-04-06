@@ -2,7 +2,7 @@ import { chakra, Link, VStack } from "@chakra-ui/react";
 
 const Footer: React.FC = () => {
   return (
-    <VStack marginTop="8" marginBottom="2" position="relative">
+    <VStack marginTop="8" marginBottom="2" position="relative" color="white">
       <p>
         Made with{" "}
         <span role="img" aria-label="heart">
