@@ -9,9 +9,8 @@ import {
 } from "@chakra-ui/react";
 import Image from "next/legacy/image";
 import cooldown from "../../images/cooldown.png";
-import { formatArray } from "../../utils/formatArray";
 import { Ability } from "../../server/routers/dota";
-import { TargetTeam } from "../../provider/dota";
+import { Behavior, TargetTeam } from "../../provider/dota";
 import constants from "../../__generated__/data/constants.json";
 
 interface Props {
@@ -60,28 +59,35 @@ interface KVProps {
 const KV: React.FC<KVProps> = (props) => {
   const { label, value, color } = props;
   return (
-    <HStack spacing={1} color="gray.500" lineHeight="90%">
-      <chakra.span wordBreak="keep-all" fontWeight="semibold">
+    <Box color="gray.500" lineHeight="125%">
+      <chakra.span wordBreak="keep-all" fontWeight="semibold" marginRight={1}>
         {label.toUpperCase()}
       </chakra.span>
       <chakra.span color={color}>{value}</chakra.span>
-    </HStack>
+    </Box>
   );
 };
 
-// FIXME: ONLY FOR DEBUG
-global.c = constants;
+if (process.env.NODE_ENV === "development") {
+  // @ts-expect-error NOTE: ONLY FOR DEBUG
+  global.c = constants;
+}
 
-const kindByBehavior = (behavior: number) =>
-  ({
-    [2]: "Passive",
-    [40]: "Unit Target",
-    [2052]: "No Target",
-    [2056]: "Unit Target",
-  }[behavior] || "Point Target");
+const hasBehavior = (behavior: number, flag: number) =>
+  (behavior & flag) === flag;
+
+const kindByBehavior = (behavior: number) => {
+  if (hasBehavior(behavior, Behavior.PASSIVE)) return "Passive";
+  if (hasBehavior(behavior, Behavior.NO_TARGET)) return "No Target";
+  if (hasBehavior(behavior, Behavior.UNIT_TARGET)) return "Unit Target";
+  if (hasBehavior(behavior, Behavior.POINT_TARGET)) return "Point Target";
+  return undefined;
+};
 
 const AbilityDescription: React.FC<Props> = ({ ability }) => {
   const affects = getAffects(ability);
+  const kind = kindByBehavior(ability.stat.behavior);
+
   return (
     <Box>
       <Heading
@@ -99,32 +105,34 @@ const AbilityDescription: React.FC<Props> = ({ ability }) => {
         padding="3"
         borderBottomRadius="sm"
       >
-        <KV label="Ability:" value={kindByBehavior(ability.stat.behavior)} />
-        {affects && <KV label="Affects:" value={affects} />}
-        {ability.stat.unitDamageType && (
-          <KV
-            label="Damage Type:"
-            {...damageType[ability.stat.unitDamageType as 1 | 2 | 4]}
-          />
-        )}
-        {typeof ability.pierces_spell_immunity !== "undefined" && (
-          <KV
-            label="Pierces Spell Immunity:"
-            value={ability.pierces_spell_immunity ? "Yes" : "No"}
-            color={ability.pierces_spell_immunity ? "spellPierces" : undefined}
-          />
-        )}
-        {ability.spell_dispellable_type && (
-          <KV
-            label="Dispellable:"
-            value={ability.spell_dispellable_type}
-            color={
-              ability.spell_dispellable_type != "Yes"
-                ? "disspellRed"
-                : undefined
-            }
-          />
-        )}
+        <Box>
+          {kind && <KV label="Ability:" value={kind} />}
+          {affects && <KV label="Affects:" value={affects} />}
+          {ability.stat.unitDamageType ? (
+            <KV
+              label="Damage Type:"
+              {...damageType[ability.stat.unitDamageType as 1 | 2 | 4]}
+            />
+          ) : undefined}
+          {ability.stat.spellImmunity ? (
+            <KV
+              label="Pierces Debuff Immunity:"
+              value={ability.stat.spellImmunity % 2 ? "Yes" : "No"}
+              color={
+                ability.stat.spellImmunity % 2 ? "spellPierces" : undefined
+              }
+            />
+          ) : undefined}
+          {ability.stat.dispellable != "NONE" ? (
+            <KV
+              label="Dispellable:"
+              value={ability.stat.dispellable}
+              color={
+                ability.stat.dispellable != "YES" ? "disspellRed" : undefined
+              }
+            />
+          ) : undefined}
+        </Box>
         <Divider />
         <Flex
           color="gray.300"
@@ -132,13 +140,13 @@ const AbilityDescription: React.FC<Props> = ({ ability }) => {
           fontWeight="semibold"
           marginBottom={2}
         >
-          {ability.description}
+          {ability.language.description}
         </Flex>
         <Box />
-        {ability.notes && ability.notes?.length > 0 && (
+        {ability.language.notes && ability.language.notes?.length > 0 && (
           <>
             <Box backgroundColor="gray.700" padding="2">
-              {ability.notes.map((note, index) => (
+              {ability.language.notes.map((note, index) => (
                 <Box color="gray.400" fontWeight="semibold" key={note + index}>
                   {note}
                 </Box>
@@ -147,23 +155,26 @@ const AbilityDescription: React.FC<Props> = ({ ability }) => {
             <Box />
           </>
         )}
-        {ability.custom_attributes &&
-          ability.custom_attributes.map((attr) => {
-            const value = formatArray(attr.value);
-            return (
-              attr.value && (
-                <KV
-                  label={attr.header}
-                  value={Array.isArray(value) ? value?.join(" / ") : value}
-                  color="gray.500"
-                  key={attr.key}
-                />
-              )
-            );
-          })}
-        {(ability.mana_cost || ability.cooldown) && (
+        {ability.language.attributes && (
+          <Box>
+            {ability.language.attributes.map((attr) => {
+              const [name, value] = attr.split(": ");
+              return (
+                value && (
+                  <KV
+                    label={name}
+                    value={Array.isArray(value) ? value?.join(" / ") : value}
+                    color="gray.500"
+                    key={name}
+                  />
+                )
+              );
+            })}
+          </Box>
+        )}
+        {(ability.stat.manaCost || ability.stat.cooldown) && (
           <HStack spacing="3" color="gray.500" alignItems="center">
-            {ability.cooldown && (
+            {ability.stat.cooldown && (
               <Flex alignItems="center">
                 <chakra.span
                   boxSize="1.2em"
@@ -172,10 +183,10 @@ const AbilityDescription: React.FC<Props> = ({ ability }) => {
                 >
                   <Image src={cooldown} alt="gold" layout="fill" />
                 </chakra.span>
-                {ability.cooldown.join(" / ")}
+                {ability.stat.cooldown.join(" / ")}
               </Flex>
             )}
-            {ability.mana_cost && (
+            {ability.stat.manaCost && (
               <Flex alignItems="center">
                 <chakra.span
                   boxSize="1.2em"
@@ -184,12 +195,12 @@ const AbilityDescription: React.FC<Props> = ({ ability }) => {
                   marginRight="0.5em"
                   backgroundColor="manacostBlue"
                 />
-                {ability.mana_cost.join(" / ")}
+                {ability.stat.manaCost.join(" / ")}
               </Flex>
             )}
           </HStack>
         )}
-        {ability.lore && (
+        {ability.language.lore && (
           <>
             <Box />
             <Box
@@ -201,7 +212,7 @@ const AbilityDescription: React.FC<Props> = ({ ability }) => {
               color="gray.400"
               marginTop="8"
             >
-              {ability.lore}
+              {ability.language.lore}
             </Box>
           </>
         )}
