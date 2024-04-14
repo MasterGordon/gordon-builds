@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Drawer,
   DrawerBody,
@@ -22,6 +23,7 @@ import NextLink from "next/link";
 import { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { MdMenu } from "react-icons/md";
+import { useSize } from "@chakra-ui/react-use-size";
 
 const HeadingLink: React.FC<{ href: string; label: string }> = ({
   href,
@@ -84,21 +86,20 @@ const HeaderNavigation: React.FC<PropsWithChildren> = ({ children }) => {
   );
 };
 
-const Header: React.FC = () => {
+const Header: React.FC<{ isSolid?: boolean }> = ({ isSolid }) => {
   const { data } = useSession();
   console.log(data);
 
-  const [headerBackground, setHeaderBackground] = useState("transparent");
-  const [shadow, setShadow] = useState("none");
+  const [isOpaque, setIsOpaque] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const size = useSize(ref);
 
   useEffect(() => {
     const onScroll = () => {
       if (window.scrollY > 0) {
-        setHeaderBackground("bgGreen");
-        setShadow("0px 2px 16px -2px black");
+        setIsOpaque(true);
       } else {
-        setHeaderBackground("transparent");
-        setShadow("none");
+        setIsOpaque(false);
       }
     };
     document.addEventListener("scroll", onScroll);
@@ -110,10 +111,7 @@ const Header: React.FC = () => {
 
   const LogInButton = () => (
     <Flex justifyContent="end">
-      <Button
-        size="lg"
-        variant="cta"
-      >
+      <Button size="lg" variant="cta">
         Log In
       </Button>
     </Flex>
@@ -128,41 +126,46 @@ const Header: React.FC = () => {
   );
 
   return (
-    <Grid
-      padding={{ base: "16px", md: "16px 40px" }}
-      templateColumns="1fr 1fr"
-      zIndex="100"
-      position="fixed"
-      left="0"
-      right="0"
-      transition="background 0s ease-in-out"
-      background={headerBackground}
-      boxShadow={shadow}
-    >
-      <HStack
-        as={GridItem}
-        colSpan={{ base: 2, md: 1 }}
-        paddingRight={{ base: "0px", md: "40px" }}
-        color="white"
-        zIndex="2"
-        gap="32px"
+    <>
+      <Box height={(isSolid ? size?.height : 0) + "px"} />
+      <Grid
+        ref={ref}
+        padding={{ base: "16px", md: "16px 40px" }}
+        templateColumns="1fr 1fr"
+        zIndex="100"
+        position="fixed"
+        top="0"
+        left="0"
+        right="0"
+        transition="background 0s ease-in-out"
+        background={isOpaque || isSolid ? "bgGreen" : "transparent"}
+        boxShadow={isOpaque || isSolid ? "0px 2px 16px -2px black" : "none"}
       >
-        <Text fontWeight="bold" fontSize="2xl">
-          GG
-        </Text>
-        {isMobile && (
-          <>
-            <Spacer />
-            <HeaderNavigation>
-              <HeaderItems />
-              <LogInButton />
-            </HeaderNavigation>
-          </>
-        )}
-        {!isMobile && <HeaderItems />}
-      </HStack>
-      {!isMobile && <LogInButton />}
-    </Grid>
+        <HStack
+          as={GridItem}
+          colSpan={{ base: 2, md: 1 }}
+          paddingRight={{ base: "0px", md: "40px" }}
+          color="white"
+          zIndex="2"
+          gap="32px"
+        >
+          <Text fontWeight="bold" fontSize="2xl">
+            ANCIENT.CAMP
+          </Text>
+          {isMobile && (
+            <>
+              <Spacer />
+              <HeaderNavigation>
+                <HeaderItems />
+                <LogInButton />
+              </HeaderNavigation>
+            </>
+          )}
+          {!isMobile && <HeaderItems />}
+        </HStack>
+        {!isMobile && <LogInButton />}
+      </Grid>
+    </>
   );
 };
 

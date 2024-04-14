@@ -1,4 +1,4 @@
-import { ChakraTheme, extendTheme } from "@chakra-ui/react";
+import { ChakraTheme, defineStyleConfig, extendTheme } from "@chakra-ui/react";
 import { Kanit } from "next/font/google";
 
 const kanit = Kanit({ subsets: ["latin-ext"], weight: ["500"] });
@@ -53,6 +53,15 @@ const theme = {
     },
   },
   components: {
+    Tooltip: defineStyleConfig({
+      baseStyle: {
+        padding: "0",
+        backgroundColor: "rgba(0, 0, 0, 1)",
+        borderRadius: "md",
+        boxShadow: "2px 2px 8px 8px rgba(0,0,0,0.75)",
+        color: "white",
+      },
+    }),
     Button: {
       baseStyle: {
         borderRadius: "3px",

@@ -5,6 +5,7 @@ import { StoreApi, useStore, createStore } from "zustand";
 import { devtools } from "zustand/middleware";
 import type { Ability } from "../../server/routers/dota";
 import { count } from "../../utils/count";
+import { Behavior } from "../../provider/dota";
 
 interface BuildItemCategoryState extends BuildItemCategory {
   items: BuildItem[];
@@ -40,15 +41,21 @@ export const emptyBuildEditorState: BuildEditorState = {
 };
 
 export type AbilitySkillState = "YES" | "NO" | "DEFAULT" | "SHARD" | "SCEPTER";
+export type EditorSkillable = Ability | "talents" | "stats";
 
 export interface EditorStore extends BuildEditorState {
   setName: (name: string) => void;
   setSlug: (slug: string) => void;
   setHeroKey: (heroKey: string) => void;
   setVersion: (version: string) => void;
-  getAbilitySkillState: (ability: Ability, index: number) => AbilitySkillState;
-  canBeSkilled: (ability: Ability, index: number) => boolean;
-  skillAbility: (ability: Ability, index: number) => void;
+  getAbilitySkillState: (
+    ability: EditorSkillable,
+    index: number
+  ) => AbilitySkillState;
+  canBeSkilled: (ability: EditorSkillable, index: number) => boolean;
+  skillAbility: (ability: EditorSkillable, index: number) => void;
+  undoAbility: () => void;
+  resetAbilities: () => void;
 }
 
 export const createBuildEditorStoreWithInitialState =
@@ -69,7 +76,7 @@ export const createBuildEditorStoreWithInitialState =
         },
         setHeroKey: (heroKey: string) => {
           set((state) => {
-            return { ...state, build: { ...state.build, heroKey } };
+            return { ...state, build: { ...state.build, heroKey, skills: [] } };
           });
         },
         setVersion: (version: string) => {
@@ -78,17 +85,24 @@ export const createBuildEditorStoreWithInitialState =
           });
         },
         getAbilitySkillState: (
-          ability: Ability,
+          ability: EditorSkillable,
           index: number
         ): AbilitySkillState => {
           const state = get();
+          if (typeof ability == "string") {
+            if (state.build.skills[index] === ability) {
+              return "YES";
+            } else {
+              return "NO";
+            }
+          }
           if (ability.ability.stat.isGrantedByScepter) {
             return "SCEPTER";
           }
           if (ability.ability.stat.isGrantedByShard) {
             return "SHARD";
           }
-          if (ability.ability.stat.maxLevel === 1) {
+          if (ability.ability.stat.behavior & Behavior.NOT_LEARNABLE) {
             return "DEFAULT";
           }
           if (state.build.skills[index] === ability.ability.name) {
@@ -97,8 +111,25 @@ export const createBuildEditorStoreWithInitialState =
 
           return "NO";
         },
-        canBeSkilled: (ability: Ability, index: number) => {
+        canBeSkilled: (ability: EditorSkillable, index: number) => {
           const state = get();
+          if (ability === "talents" || ability === "stats") {
+            const timesSkilled = count(state.build.skills, ability);
+            // Stats can be skill from level 6 every 2 levels up to 7 times
+            if (ability === "stats") {
+              if (timesSkilled >= 7) return false;
+              return Math.ceil((index - 6) / 2) >= timesSkilled;
+            }
+            if (ability === "talents") {
+              if (timesSkilled >= 4) return false;
+              return Math.floor((index + 1 - 10) / 5) >= timesSkilled;
+            }
+            // Talents can be skill from level 10 every 5 levels up to 4 times
+            return true;
+          }
+          if (ability.ability.stat.behavior & Behavior.NOT_LEARNABLE) {
+            return false;
+          }
           if (
             ability.ability.stat.isGrantedByShard ||
             ability.ability.stat.isGrantedByScepter
@@ -116,21 +147,38 @@ export const createBuildEditorStoreWithInitialState =
           if (countOfAbility >= maxLevel) {
             return false;
           }
-          if (Math.ceil((index + 1) / 2) <= countOfAbility) {
+          if (!isUltimate && Math.ceil((index + 1) / 2) <= countOfAbility) {
+            return false;
+          }
+          // Ultimate can be skilled once every 6 levels
+          if (isUltimate && countOfAbility >= Math.floor((index + 1) / 6)) {
             return false;
           }
           return true;
         },
-        skillAbility: (ability: Ability, index: number) => {
+        skillAbility: (ability: EditorSkillable, index: number) => {
           set((state) => {
             let skills = state.build.skills;
+            const skillName =
+              typeof ability == "string" ? ability : ability.ability.name;
             if (index >= state.build.skills.length) {
-              skills = [...state.build.skills, ability.ability.name];
+              skills = [...state.build.skills, skillName];
             } else {
               skills = skills.slice(0, index);
             }
 
             return { ...state, build: { ...state.build, skills } };
+          });
+        },
+        undoAbility: () => {
+          set((state) => {
+            const skills = state.build.skills.slice(0, -1);
+            return { ...state, build: { ...state.build, skills } };
+          });
+        },
+        resetAbilities: () => {
+          set((state) => {
+            return { ...state, build: { ...state.build, skills: [] } };
           });
         },
       }))

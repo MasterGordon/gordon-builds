@@ -14,7 +14,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
     <SessionProvider session={session}>
       <ChakraProvider theme={theme}>
-        <Header />
+        <Header isSolid={(Component as any).isHeaderSolid ?? true} />
         <Component {...pageProps} />
         <Footer />
       </ChakraProvider>

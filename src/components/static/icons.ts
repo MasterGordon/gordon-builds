@@ -22,7 +22,7 @@ const icons = {
   ranged: svg("ranged"),
   aghanims_shard: item("aghanims_shard"),
   aghanims_scepter: item("ultimate_scepter"),
-  talens: svg("talents"),
+  talents: svg("talents"),
 } as const;
 
 export default icons;

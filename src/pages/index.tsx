@@ -86,7 +86,7 @@ const Home: NextPage = () => {
             </HStack>
           </VStack>
           {isMobile && (
-            <PopularBuildsButton scrollRef={scrollRef} buttonSize="md" />
+            <PopularBuildsButton scrollTargetRef={scrollRef} buttonSize="md" />
           )}
         </Flex>
         {!isMobile && (
@@ -105,7 +105,7 @@ const Home: NextPage = () => {
               objectFit="cover"
               alt="background-image"
             />
-            <PopularBuildsButton scrollRef={scrollRef} buttonSize="xl" />
+            <PopularBuildsButton scrollTargetRef={scrollRef} buttonSize="xl" />
           </Flex>
         )}
         <Flex
@@ -130,8 +130,8 @@ const Home: NextPage = () => {
 
 const PopularBuildsButton: React.FC<{
   buttonSize: "md" | "xl";
-  scrollRef: RefObject<HTMLButtonElement>;
-}> = ({ buttonSize, scrollRef }) => {
+  scrollTargetRef: RefObject<HTMLButtonElement>;
+}> = ({ buttonSize, scrollTargetRef }) => {
   return (
     <Flex
       position="absolute"
@@ -151,8 +151,8 @@ const PopularBuildsButton: React.FC<{
           a: { backgroundColor: "#045a69", color: "#fff" },
         }}
         onClick={() =>
-          scrollRef?.current
-            ? scrollRef.current.scrollIntoView({ behavior: "smooth" })
+          scrollTargetRef?.current
+            ? scrollTargetRef.current.scrollIntoView({ behavior: "smooth" })
             : undefined
         }
       >
@@ -171,5 +171,8 @@ const PopularBuildsButton: React.FC<{
     </Flex>
   );
 };
+
+// @ts-expect-error - Property 'isHeaderSolid' does not exist on type 'typeof Home'.
+Home.isHeaderSolid = false;
 
 export default Home;
