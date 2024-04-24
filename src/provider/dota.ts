@@ -77,6 +77,10 @@ export const Behavior = {
   LAST: 1073741824,
 } as const;
 
+export const talents = constants
+  .abilities!.filter((a) => a?.isTalent)
+  .filter((a) => a?.language?.displayName);
+
 export const TargetType = {
   NONE: 0,
   UNIT: 1,

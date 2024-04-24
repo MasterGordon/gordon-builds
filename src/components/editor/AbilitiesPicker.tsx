@@ -2,6 +2,7 @@ import {
   Button,
   Center,
   HStack,
+  Heading,
   IconButton,
   Img,
   VStack,
@@ -49,7 +50,7 @@ const getIcon = ({
   return mapping[state];
 };
 
-const glowAnimation = keyframes`
+export const glowAnimation = keyframes`
   0% {
     box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.3);
   }
@@ -83,6 +84,7 @@ const AbilitiesPicker: React.FC = () => {
 
   return (
     <VStack alignItems="start">
+      <Heading size="lg">Abilities</Heading>
       <HStack>
         <Button onClick={reset}>Reset</Button>
         <Button onClick={undo}>Undo</Button>

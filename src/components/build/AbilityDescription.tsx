@@ -183,7 +183,7 @@ const AbilityDescription: React.FC<Props> = ({ ability }) => {
                 >
                   <Image src={cooldown} alt="gold" layout="fill" />
                 </chakra.span>
-                {ability.stat.cooldown.join(" / ")}
+                {ability.stat.cooldown.map(Math.round).join(" / ")}
               </Flex>
             )}
             {ability.stat.manaCost && (

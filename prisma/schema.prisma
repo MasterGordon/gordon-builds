@@ -43,6 +43,7 @@ model Build {
   version          String
   heroKey          String
   skills           String[]
-  talents          String[]
+  leftTalents      Boolean[]
+  rightTalents     Boolean[]
   items            BuildItemCategory[]
 }

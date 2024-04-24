@@ -222,6 +222,14 @@ const main = async () => {
               primaryAttributeEnum
             }
           }
+          abilities {
+            id
+            language {
+              displayName
+              description
+            }
+            isTalent
+          }
         }
       }
 

@@ -29,4 +29,10 @@ describe("dota TRPC router", () => {
       expect(heroByName).toBeDefined();
     }
   });
+
+  it("should return talent", async () => {
+    const router = getTestRouter();
+    const talents = await router.dota.getTalents({ ids: [1, 2] });
+    expect(talents).toBeDefined();
+  });
 });

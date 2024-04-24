@@ -33,7 +33,8 @@ export const emptyBuildEditorState: BuildEditorState = {
     description: "",
     trollLevel: 1,
     complexity: 1,
-    talents: ["", ""],
+    leftTalents: [false, false, false, false],
+    rightTalents: [false, false, false, false],
     skills: [],
   },
   itemCategories: new Set(),
@@ -54,6 +55,7 @@ export interface EditorStore extends BuildEditorState {
   ) => AbilitySkillState;
   canBeSkilled: (ability: EditorSkillable, index: number) => boolean;
   skillAbility: (ability: EditorSkillable, index: number) => void;
+  skillTalent: (index: number, side: "left" | "right") => void;
   undoAbility: () => void;
   resetAbilities: () => void;
 }
@@ -168,6 +170,18 @@ export const createBuildEditorStoreWithInitialState =
             }
 
             return { ...state, build: { ...state.build, skills } };
+          });
+        },
+        skillTalent: (index: number, side: "left" | "right") => {
+          set((state) => {
+            const build = { ...state.build };
+            const talents =
+              side === "left" ? build.leftTalents : build.rightTalents;
+            const oppositeTalents =
+              side === "left" ? build.rightTalents : build.leftTalents;
+            talents[index] = true;
+            oppositeTalents[index] = false;
+            return { ...state, build };
           });
         },
         undoAbility: () => {

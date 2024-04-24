@@ -10,6 +10,7 @@ import {
 import HeroPicker from "./HeroPicker";
 import NameInput from "./NameInput";
 import VersionPicker from "./VersionPicker";
+import TalentPicker from "./TalentPicker";
 
 const BuildEditor: React.FC<{ initialValue?: BuildEditorState }> = ({
   initialValue,
@@ -30,6 +31,7 @@ const BuildEditor: React.FC<{ initialValue?: BuildEditorState }> = ({
         </Grid>
         <NameInput />
         <AbilitiesPicker />
+        <TalentPicker />
       </VStack>
     </BuildEditorProvider>
   );

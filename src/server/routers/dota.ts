@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { procedure, router } from "../trpc";
-import { gameVersions, heroes } from "../../provider/dota";
+import { gameVersions, heroes, talents } from "../../provider/dota";
 import { HeroType } from "../../__generated__/graphql";
 
 const heroOverviewSchema = z.object({
@@ -109,6 +109,12 @@ export type Ability = z.infer<typeof abilitySchema>;
 const heroSchema = heroOverviewSchema.merge(
   z.object({
     abilities: z.array(abilitySchema),
+    talents: z.array(
+      z.object({
+        abilityId: z.number(),
+        slot: z.number(),
+      })
+    ),
   })
 );
 
@@ -119,6 +125,14 @@ const gameVersionsSchema = z.array(
     id: z.number(),
   })
 );
+
+const talentSchema = z.object({
+  id: z.number(),
+  language: z.object({
+    displayName: z.string(),
+    description: z.array(z.string()),
+  }),
+});
 
 export const dota = router({
   getHero: procedure
@@ -161,4 +175,17 @@ export const dota = router({
   getVersions: procedure.query(() => {
     return gameVersionsSchema.parse(gameVersions);
   }),
+  getTalents: procedure
+    .input(
+      z.object({
+        ids: z.array(z.number()),
+      })
+    )
+    .query(({ input }) => {
+      return talents
+        .map((talent) => {
+          return talentSchema.parse(talent);
+        })
+        .filter((talent) => input.ids.includes(talent.id));
+    }),
 });

@@ -1,20 +1,32 @@
 import { Center, Flex, Grid, Heading, VStack } from "@chakra-ui/react";
+import { glowAnimation } from "../editor/AbilitiesPicker";
 
 interface Props {
-  talents: [string, string];
+  talents: [boolean[], boolean[]];
   talentNames: string[];
+  onChange?: (index: number, choise: "left" | "right") => void;
 }
 
 interface TreeRowProps {
   left?: string;
   right?: string;
   level: number;
+  index: number;
   hightlightLeft?: boolean;
   hightlightRight?: boolean;
+  onChange?: (index: number, choise: "left" | "right") => void;
 }
 
 const TreeRow: React.FC<TreeRowProps> = (props) => {
-  const { left, right, level, hightlightLeft, hightlightRight } = props;
+  const {
+    left,
+    right,
+    level,
+    hightlightLeft,
+    hightlightRight,
+    index,
+    onChange,
+  } = props;
   return (
     <>
       <Flex
@@ -24,6 +36,13 @@ const TreeRow: React.FC<TreeRowProps> = (props) => {
         textShadow="1px 1px black"
         borderRadius="sm"
         justifyContent="center"
+        as={onChange ? "button" : undefined}
+        onClick={() => onChange?.(index, "left")}
+        animation={
+          !hightlightLeft && !hightlightRight && onChange
+            ? `${glowAnimation} 2s infinite`
+            : undefined
+        }
       >
         {left}
       </Flex>
@@ -44,6 +63,13 @@ const TreeRow: React.FC<TreeRowProps> = (props) => {
         textShadow="1px 1px black"
         borderRadius="sm"
         justifyContent="center"
+        as={onChange ? "button" : undefined}
+        onClick={() => onChange?.(index, "right")}
+        animation={
+          !hightlightLeft && !hightlightRight && onChange
+            ? `${glowAnimation} 2s infinite`
+            : undefined
+        }
       >
         {right}
       </Flex>
@@ -52,20 +78,15 @@ const TreeRow: React.FC<TreeRowProps> = (props) => {
 };
 
 const TalentTree: React.FC<Props> = (props) => {
-  const { talents } = props;
-  const [_, ...talentNames] = props.talentNames;
+  const { talents, talentNames, onChange } = props;
   const leftTalents = talentNames
-    .map((talent, index) => (index % 2 === 1 ? talent : undefined))
-    .filter(Boolean)
-    .reverse();
-  const rightTalents = talentNames
     .map((talent, index) => (index % 2 === 0 ? talent : undefined))
-    .filter(Boolean)
-    .reverse();
-  const selectedLeft = [...talents[0]].reverse().map((talent) => talent == "X");
-  const selectedRight = [...talents[1]]
-    .reverse()
-    .map((talent) => talent == "X");
+    .filter(Boolean);
+  const rightTalents = talentNames
+    .map((talent, index) => (index % 2 === 1 ? talent : undefined))
+    .filter(Boolean);
+  const selectedLeft = [...talents[0]].reverse();
+  const selectedRight = [...talents[1]].reverse();
 
   return (
     <VStack backgroundColor="gray.800" padding="4" borderRadius="md">
@@ -79,8 +100,10 @@ const TalentTree: React.FC<Props> = (props) => {
             left={leftTalents[index]}
             right={rightTalents[index]}
             level={level}
+            index={3 - index}
             hightlightLeft={selectedLeft[index]}
             hightlightRight={selectedRight[index]}
+            onChange={onChange}
           />
         ))}
       </Grid>
