@@ -19,7 +19,7 @@ interface EditorError {
 
 export interface BuildEditorState {
   build: Omit<Build, "id">;
-  itemCategories: Set<BuildItemCategoryState>;
+  itemCategories: Record<string, BuildItemCategoryState>;
   errors: EditorError[];
 }
 
@@ -37,7 +37,7 @@ export const emptyBuildEditorState: BuildEditorState = {
     rightTalents: [false, false, false, false],
     skills: [],
   },
-  itemCategories: new Set(),
+  itemCategories: {},
   errors: [],
 };
 
@@ -58,6 +58,7 @@ export interface EditorStore extends BuildEditorState {
   skillTalent: (index: number, side: "left" | "right") => void;
   undoAbility: () => void;
   resetAbilities: () => void;
+  addItemCategory: (category: string) => void;
 }
 
 export const createBuildEditorStoreWithInitialState =
@@ -193,6 +194,19 @@ export const createBuildEditorStoreWithInitialState =
         resetAbilities: () => {
           set((state) => {
             return { ...state, build: { ...state.build, skills: [] } };
+          });
+        },
+        addItemCategory: (category: string) => {
+          set((state) => {
+            return {
+              ...state,
+              itemCategories: {
+                ...state.itemCategories,
+                [category]: {
+                  items: [] as BuildItem[],
+                },
+              },
+            };
           });
         },
       }))

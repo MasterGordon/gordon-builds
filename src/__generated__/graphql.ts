@@ -3655,6 +3655,7 @@ export type MatchGroupByAssistsType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
   matchCount?: Maybe<Scalars['Int']['output']>;
@@ -3670,6 +3671,7 @@ export type MatchGroupByAwardType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   award?: Maybe<MatchPlayerAward>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
@@ -3686,6 +3688,7 @@ export type MatchGroupByClusterType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   cluster?: Maybe<Scalars['Long']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
@@ -3702,6 +3705,7 @@ export type MatchGroupByDateDayHeroType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   dateDay?: Maybe<Scalars['Long']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   hero?: Maybe<HeroType>;
@@ -3725,6 +3729,7 @@ export type MatchGroupByDateDayType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   dateDay?: Maybe<Scalars['Long']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
@@ -3741,6 +3746,7 @@ export type MatchGroupByDeathsType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   deathCount?: Maybe<Scalars['Long']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
@@ -3757,6 +3763,7 @@ export type MatchGroupByDurationMinutesType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   durationMinutes?: Maybe<Scalars['Long']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
@@ -3773,6 +3780,7 @@ export type MatchGroupByFactionType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   isRadiant?: Maybe<Scalars['Boolean']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
@@ -3789,6 +3797,7 @@ export type MatchGroupByGameModeType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   gameMode?: Maybe<Scalars['Long']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
@@ -3805,6 +3814,7 @@ export type MatchGroupByGameVersionType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   gameVersion?: Maybe<Scalars['Long']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
@@ -3821,6 +3831,7 @@ export type MatchGroupByGoldPerMinuteType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   goldPerMinute?: Maybe<Scalars['Long']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
@@ -3837,6 +3848,7 @@ export type MatchGroupByHeroPerformanceType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   heroId?: Maybe<Scalars['Short']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
@@ -3854,6 +3866,7 @@ export type MatchGroupByHeroType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   hero?: Maybe<HeroType>;
   heroId?: Maybe<Scalars['Long']['output']>;
@@ -3876,6 +3889,7 @@ export type MatchGroupByHourType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   hour?: Maybe<Scalars['Short']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
@@ -3892,6 +3906,7 @@ export type MatchGroupByIsIntentionalFeedingType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   isIntentionalFeeding?: Maybe<Scalars['Boolean']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
@@ -3908,6 +3923,7 @@ export type MatchGroupByIsLeagueType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   isLeague?: Maybe<Scalars['Boolean']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
@@ -3924,6 +3940,7 @@ export type MatchGroupByIsLeaverType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   isLeaver?: Maybe<Scalars['Boolean']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
@@ -3940,6 +3957,7 @@ export type MatchGroupByIsPartyType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   isParty?: Maybe<Scalars['Boolean']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
@@ -3956,6 +3974,7 @@ export type MatchGroupByIsRandomType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   isRandom?: Maybe<Scalars['Boolean']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
@@ -3972,6 +3991,7 @@ export type MatchGroupByIsSeriesType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   isSeries?: Maybe<Scalars['Boolean']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
@@ -3988,6 +4008,7 @@ export type MatchGroupByIsStatsType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   isStats?: Maybe<Scalars['Boolean']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
@@ -4004,6 +4025,7 @@ export type MatchGroupByIsVictoryType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   isVictory?: Maybe<Scalars['Boolean']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
@@ -4020,6 +4042,7 @@ export type MatchGroupByKillsType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   killCount?: Maybe<Scalars['Long']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
@@ -4036,6 +4059,7 @@ export type MatchGroupByLaneType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   lane?: Maybe<MatchLaneType>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
@@ -4052,6 +4076,7 @@ export type MatchGroupByLeagueIdType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
   league?: Maybe<LeagueType>;
@@ -4069,6 +4094,7 @@ export type MatchGroupByLevelType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
   level?: Maybe<Scalars['Long']['output']>;
@@ -4085,6 +4111,7 @@ export type MatchGroupByLobbyTypeType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
   lobbyType?: Maybe<Scalars['Long']['output']>;
@@ -4101,6 +4128,7 @@ export type MatchGroupByPositionType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
   matchCount?: Maybe<Scalars['Int']['output']>;
@@ -4117,6 +4145,7 @@ export type MatchGroupByRegionType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
   matchCount?: Maybe<Scalars['Int']['output']>;
@@ -4133,6 +4162,7 @@ export type MatchGroupByRoamLaneType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
   matchCount?: Maybe<Scalars['Int']['output']>;
@@ -4149,6 +4179,7 @@ export type MatchGroupByRoleType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
   matchCount?: Maybe<Scalars['Int']['output']>;
@@ -4165,6 +4196,7 @@ export type MatchGroupBySteamAccountIdAgainstTeamType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
   matchCount?: Maybe<Scalars['Int']['output']>;
@@ -4182,6 +4214,7 @@ export type MatchGroupBySteamAccountIdHeroIdAgainstTeamType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   hero?: Maybe<HeroType>;
   heroId?: Maybe<Scalars['Short']['output']>;
@@ -4206,6 +4239,7 @@ export type MatchGroupBySteamAccountIdHeroIdType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   hero?: Maybe<HeroType>;
   heroId?: Maybe<Scalars['Short']['output']>;
@@ -4230,6 +4264,7 @@ export type MatchGroupBySteamAccountIdHeroIdWithTeamType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   hero?: Maybe<HeroType>;
   heroId?: Maybe<Scalars['Short']['output']>;
@@ -4254,6 +4289,7 @@ export type MatchGroupBySteamAccountIdType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
   matchCount?: Maybe<Scalars['Int']['output']>;
@@ -4271,6 +4307,7 @@ export type MatchGroupBySteamAccountIdWithTeamType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
   matchCount?: Maybe<Scalars['Int']['output']>;
@@ -4288,6 +4325,7 @@ export type MatchGroupByTeamType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
   matchCount?: Maybe<Scalars['Int']['output']>;
@@ -4305,6 +4343,7 @@ export type MatchGroupByTotalKillsType = {
   avgImp?: Maybe<Scalars['Int']['output']>;
   avgKDA?: Maybe<Scalars['Float']['output']>;
   avgKills?: Maybe<Scalars['Float']['output']>;
+  avgTowerDamage?: Maybe<Scalars['Float']['output']>;
   firstMatchDateTime?: Maybe<Scalars['Long']['output']>;
   lastMatchDateTime?: Maybe<Scalars['Long']['output']>;
   matchCount?: Maybe<Scalars['Int']['output']>;
@@ -5162,6 +5201,7 @@ export type MatchPlayerType = {
   steamAccountId?: Maybe<Scalars['Long']['output']>;
   streakPrediction?: Maybe<Scalars['Short']['output']>;
   towerDamage?: Maybe<Scalars['Int']['output']>;
+  variant?: Maybe<Scalars['Byte']['output']>;
 };
 
 
